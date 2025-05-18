@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Kuching ART</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Kuching ART</h1>
+                <p>Autonomous Rapid Transit</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#schedules">Schedules</a></li>
+                    <li><a href="index.html#routes">Routes</a></li>
+                    <li><a href="index.html#fares">Fares</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li><a href="#" class="login-btn" id="user-profile-link">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-container">
+                <div class="dashboard-sidebar">
+                    <div class="sidebar-user">
+                        <img src="images/user-avatar.png" alt="User Avatar" class="user-avatar">
+                        <h3 id="user-name">User Name</h3>
+                        <p id="user-email">user@example.com</p>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active" data-tab="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li><a href="#" data-tab="bookings"><i class="fas fa-ticket-alt"></i> My Bookings</a></li>
+                        <li><a href="#" data-tab="profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="#" data-tab="preferences"><i class="fas fa-cog"></i> Preferences</a></li>
+                        <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+                
+                <div class="dashboard-content">
+                    <!-- Dashboard Tab -->
+                    <div class="dashboard-tab active" id="dashboard-tab">
+                        <div class="dashboard-header">
+                            <h2 class="dashboard-title">Dashboard</h2>
+                            <a href="booking.html" class="btn primary-btn">Book New Trip</a>
+                        </div>
+                        
+                        <div class="dashboard-cards">
+                            <div class="dashboard-card">
+                                <div class="card-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <p class="card-label">Active Bookings</p>
+                                <h3 class="card-value" id="active-bookings-count">0</h3>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="card-icon"><i class="fas fa-history"></i></div>
+                                <p class="card-label">Past Trips</p>
+                                <h3 class="card-value" id="past-trips-count">0</h3>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="card-icon"><i class="fas fa-star"></i></div>
+                                <p class="card-label">Loyalty Points</p>
+                                <h3 class="card-value" id="loyalty-points">0</h3>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                <p class="card-label">Wallet Balance</p>
+                                <h3 class="card-value" id="wallet-balance">RM 0.00</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-activities">
+                            <h3>Recent Activities</h3>
+                            <div class="activity-list" id="activity-list">
+                                <p>No recent activities.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="upcoming-trips">
+                            <h3>Upcoming Trips</h3>
+                            <div class="trip-list" id="upcoming-trip-list">
+                                <p>No upcoming trips scheduled.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bookings Tab -->
+                    <div class="dashboard-tab" id="bookings-tab">
+                        <div class="dashboard-header">
+                            <h2 class="dashboard-title">My Bookings</h2>
+                            <div class="booking-filters">
+                                <select id="booking-status-filter">
+                                    <option value="all">All Bookings</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                                <input type="date" id="booking-date-filter">
+                                <button type="button" class="btn secondary-btn" id="reset-filters">Reset</button>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-list-container">
+                            <table class="bookings-table">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Date</th>
+                                        <th>Route</th>
+                                        <th>From - To</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body">
+                                    <!-- This will be populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Tab -->
+                    <div class="dashboard-tab" id="profile-tab">
+                        <div class="dashboard-header">
+                            <h2 class="dashboard-title">Profile Information</h2>
+                        </div>
+                        
+                        <div class="profile-container">
+                            <div class="profile-info">
+                                <form id="profile-form">
+                                    <div class="form-group">
+                                        <label for="profile-name">Full Name</label>
+                                        <input type="text" id="profile-name" name="name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile-email">Email</label>
+                                        <input type="email" id="profile-email" name="email" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile-phone">Phone Number</label>
+                                        <input type="tel" id="profile-phone" name="phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profile-address">Address</label>
+                                        <textarea id="profile-address" name="address" rows="3"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn primary-btn">Save Changes</button>
+                                </form>
+                            </div>
+                            
+                            <div class="profile-security">
+                                <h3>Security</h3>
+                                <form id="password-form">
+                                    <div class="form-group">
+                                        <label for="current-password">Current Password</label>
+                                        <input type="password" id="current-password" name="currentPassword">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-password">New Password</label>
+                                        <input type="password" id="new-password" name="newPassword">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirm-password">Confirm New Password</label>
+                                        <input type="password" id="confirm-password" name="confirmPassword">
+                                    </div>
+                                    <button type="submit" class="btn primary-btn">Change Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences Tab -->
+                    <div class="dashboard-tab" id="preferences-tab">
+                        <div class="dashboard-header">
+                            <h2 class="dashboard-title">Preferences</h2>
+                        </div>
+                        
+                        <div class="preferences-container">
+                            <form id="preferences-form">
+                                <h3>Notification Settings</h3>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="email-notifications" name="emailNotifications" checked>
+                                    <label for="email-notifications">Email Notifications</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="sms-notifications" name="smsNotifications" checked>
+                                    <label for="sms-notifications">SMS Notifications</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="booking-reminders" name="bookingReminders" checked>
+                                    <label for="booking-reminders">Booking Reminders</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="special-offers" name="specialOffers" checked>
+                                    <label for="special-offers">Special Offers & Promotions</label>
+                                </div>
+                                
+                                <h3>Trip Preferences</h3>
+                                <div class="form-group">
+                                    <label for="preferred-station">Preferred Station</label>
+                                    <select id="preferred-station" name="preferredStation">
+                                        <option value="">Select a station</option>
+                                        <option value="kuching-sentral">Kuching Sentral</option>
+                                        <option value="satok">Satok</option>
+                                        <option value="damai">Damai</option>
+                                        <option value="petra-jaya">Petra Jaya</option>
+                                        <option value="samarahan">Samarahan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="preferred-payment">Preferred Payment Method</label>
+                                    <select id="preferred-payment" name="preferredPayment">
+                                        <option value="">Select payment method</option>
+                                        <option value="card">Credit/Debit Card</option>
+                                        <option value="ewallet">E-Wallet</option>
+                                        <option value="wallet">Kuching ART Wallet</option>
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="btn primary-btn">Save Preferences</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>About Kuching ART</h3>
+                    <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#schedules">Schedules</a></li>
+                        <li><a href="index.html#routes">Routes</a></li>
+                        <li><a href="index.html#fares">Fares</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-service">
+                    <h3>Customer Services</h3>
+                    <ul>
+                        <li><a href="booking.html">Book Tickets</a></li>
+                        <li><a href="manage-booking.html">Manage Bookings</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter for updates and promotions.</p>
+                    <form>
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit" class="btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kuching Autonomous Rapid Transit. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

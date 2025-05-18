@@ -1,43 +1,5 @@
 // auth.js - Authentication handling for Kuching ART website
 
-// Define User class for authentication functionality
-class User {
-    constructor(id, name, email, phoneNumber, isLoggedIn = false) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.isLoggedIn = isLoggedIn;
-        this.bookings = [];
-    }
-
-    login() {
-        this.isLoggedIn = true;
-        // Store user data in session storage
-        sessionStorage.setItem('currentUser', JSON.stringify({
-            id: this.id,
-            name: this.name,
-            email: this.email,
-            phoneNumber: this.phoneNumber,
-            isLoggedIn: this.isLoggedIn
-        }));
-    }
-
-    logout() {
-        this.isLoggedIn = false;
-        // Clear user data from session storage
-        sessionStorage.removeItem('currentUser');
-    }
-    
-    getBookings() {
-        return this.bookings;
-    }
-
-    addBooking(booking) {
-        this.bookings.push(booking);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     // Get DOM elements
     const loginTab = document.getElementById('login-tab');
@@ -170,12 +132,11 @@ function mockLogin(email, password) {
         
         const user = new User(userId, userName, email, '0123456789', true);
         user.login(); // This stores the user in session storage
+          showSuccess('Login successful!');
         
-        showSuccess('Login successful!');
-        
-        // Redirect to home page
+        // Redirect to dashboard page
         setTimeout(function() {
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         }, 1500);
     } else {
         showError('Invalid credentials. Please try again.');
@@ -190,12 +151,11 @@ function mockRegister(name, email, phone, password) {
     const userId = 'user_' + Math.floor(Math.random() * 10000);
     const user = new User(userId, name, email, phone, true);
     user.login(); // This stores the user in session storage
+      showSuccess('Registration successful! Welcome to Kuching ART.');
     
-    showSuccess('Registration successful! Welcome to Kuching ART.');
-    
-    // Redirect to home page
+    // Redirect to dashboard page
     setTimeout(function() {
-        window.location.href = 'index.html';
+        window.location.href = 'dashboard.html';
     }, 1500);
 }
 
