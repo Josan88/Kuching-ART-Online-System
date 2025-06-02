@@ -1,28 +1,5 @@
 // Kuching ART Online System - Main Application
 
-// Import models
-import User from './models/User.js';
-import Admin from './models/Admin.js';
-import Ticket from './models/Ticket.js';
-import Route from './models/Route.js';
-import Merchandise from './models/Merchandise.js';
-import Order from './models/Order.js';
-import OrderItem from './models/OrderItem.js';
-import Payment from './models/Payment.js';
-import Feedback from './models/Feedback.js';
-import Notification from './models/Notification.js';
-import PointsLedger from './models/PointsLedger.js';
-
-// Import services
-import DataService from './services/DataService.js';
-import UserService from './services/UserService.js';
-import TicketService from './services/TicketService.js';
-import MerchandiseService from './services/MerchandiseService.js';
-import OrderService from './services/OrderService.js';
-import PaymentService from './services/PaymentService.js';
-import FeedbackService from './services/FeedbackService.js';
-import NotificationService from './services/NotificationService.js';
-
 class KuchingARTApp {
     constructor() {
         this.currentUser = null;
