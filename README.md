@@ -80,13 +80,10 @@ The Kuching ART Online System is a full-featured web application designed to pro
 │ • Forms         │    │ • Validations   │    │ • Entities      │
 │ • Components    │    │ • Workflows     │    │ • Relationships │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                       ┌─────────────────┐
+                                │                       ┌─────────────────┐
                        │  Data Layer     │
                        │                 │
                        │ • localStorage  │
-                       │ • sessionStorage│
-                       │ • IndexedDB     │
                        └─────────────────┘
 ```
 
@@ -242,14 +239,17 @@ await feedbackService.addFeedbackResponse(
 ### Core Services
 
 #### DataService
-**Purpose**: Provides abstracted data persistence layer supporting multiple storage backends.
+**Purpose**: Provides persistent data storage using localStorage for all application data.
 
 **Key Methods**:
-- `save(collection, data)` - Create new record
-- `getById(collection, id)` - Retrieve single record
-- `getAll(collection)` - Retrieve all records
-- `update(collection, id, data)` - Update existing record
-- `delete(collection, id)` - Delete record
+- `saveData(key, data)` - Save data to localStorage
+- `loadData(key)` - Load data from localStorage
+- `deleteData(key)` - Delete data from localStorage
+- `getAllKeys()` - Get all storage keys
+- `clearAll()` - Clear all stored data
+- `exportData()` - Export all data to JSON
+- `importData(data)` - Import data from JSON
+- `getStorageInfo()` - Get storage usage statistics
 
 #### UserService
 **Purpose**: Manages user authentication, registration, and profile management.
