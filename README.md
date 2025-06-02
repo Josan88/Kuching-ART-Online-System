@@ -4,16 +4,16 @@ A comprehensive JavaScript-based transportation booking and merchandise manageme
 
 ## 📋 Table of Contents
 
-- [Overview](## 🚌 Overview)
-- [Features](## ✨ Features)
-- [Architecture](## 🏗️ Architecture)
-- [Project Structure](## 📁 Project Structure)
-- [Installation](## ⚙️ Installation)
-- [Usage](## 🚀 Usage)
-- [API Documentation](## 📜 API Documentation)
-- [Classes Overview](## 📚 Classes Overview)
-- [Contributing](## 🤝 Contributing)
-- [Assignment Information](## 📋 Assignment Information)
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [Classes Overview](#classes-overview)
+- [Contributing](#contributing)
+- [Assignment Information](#assignment-information)
 
 ## 🚌 Overview
 
