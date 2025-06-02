@@ -186,14 +186,14 @@ class BookingManager {
             passengers,
             new Date()
         );
-        
+
         // Check if seats are available and book them
         if (trip.bookSeat(passengers.length)) {
             this.bookings.push(newBooking);
             user.addBooking(newBooking);
             return newBooking;
         }
-        
+
         return null; // Booking failed
     }
 
@@ -227,11 +227,11 @@ class BookingManager {
 }
 
 // Initialize app
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in
     const currentUserData = sessionStorage.getItem('currentUser');
     let currentUser = null;
-    
+
     if (currentUserData) {
         const userData = JSON.parse(currentUserData);
         currentUser = new User(
@@ -241,11 +241,11 @@ document.addEventListener('DOMContentLoaded', function() {
             userData.phoneNumber,
             userData.isLoggedIn
         );
-        
+
         // Update UI for logged-in user
         updateUIForLoggedInUser(currentUser);
     }
-    
+
     // Event listeners and other initializations
     initializeApp();
 });
@@ -260,15 +260,15 @@ function updateUIForLoggedInUser(user) {
 
 function initializeApp() {
     // Initialize any event listeners or features needed on all pages
-    
+
     // Example: Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            
+
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;
-            
+
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
                 window.scrollTo({
