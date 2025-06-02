@@ -501,7 +501,4 @@ class PaymentService {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = PaymentService;
-}
+export default PaymentService;

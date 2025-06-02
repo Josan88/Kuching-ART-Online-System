@@ -730,7 +730,4 @@ class FeedbackService {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = FeedbackService;
-}
+export default FeedbackService;
