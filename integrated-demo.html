@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuching ART - Integrated System Demo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .section {
+            display: none;
+            padding: 2rem 0;
+        }
+        .section.active {
+            display: block;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .close:hover {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .nav {
+            background: #2c3e50;
+            padding: 1rem 0;
+        }
+        .nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn-primary {
+            background: #3498db;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        .btn-success {
+            background: #27ae60;
+        }
+        .btn-danger {
+            background: #e74c3c;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        .notification {
+            background: #2ecc71;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .notification.error {
+            background: #e74c3c;
+        }
+        .notification.warning {
+            background: #f39c12;
+        }
+        .notification.info {
+            background: #3498db;
+        }
+        .cart-summary {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .merchandise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .merchandise-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .merchandise-item:hover {
+            transform: translateY(-5px);
+        }
+        .merchandise-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .merchandise-item-content {
+            padding: 1rem;
+        }
+        .merchandise-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="logo">
+                <h2 style="color: white; margin: 0;">Kuching ART</h2>
+            </div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#routes">Book Tickets</a></li>
+                <li><a href="#merchandise">Merchandise</a></li>
+                <li><a href="#profile">Profile</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button id="loginBtn" class="btn">Login</button>
+                <button id="registerBtn" class="btn btn-secondary">Register</button>
+                <div id="userProfile" class="hidden">
+                    <span id="userName" style="color: white; margin-right: 1rem;"></span>
+                    <button id="logoutBtn" class="btn btn-danger">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="container">
+                <h1>Kuching ART Online System</h1>
+                <p>Complete Integration of All Six Key Scenarios</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" data-testid="book-ticket-btn">Book a Ticket</button>
+                    <button class="btn btn-secondary" data-testid="browse-merchandise-btn">Browse Merchandise</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Scenario 1: User Registration & Login</h3>
+                    <p>Complete user authentication system with registration and login functionality.</p>
+                    <ul>
+                        <li>User registration with validation</li>
+                        <li>Secure login authentication</li>
+                        <li>Session management</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-ticket-alt"></i> Scenario 2: Ticket Booking & Payment</h3>
+                    <p>End-to-end ticket booking with integrated payment processing.</p>
+                    <ul>
+                        <li>Route search and booking</li>
+                        <li>Payment processing</li>
+                        <li>Booking confirmation</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-undo"></i> Scenario 3: Trip Cancellation & Refund</h3>
+                    <p>Complete cancellation and refund processing system.</p>
+                    <ul>
+                        <li>Trip cancellation</li>
+                        <li>Automatic refund processing</li>
+                        <li>Refund notifications</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Scenario 4: Admin Statistics</h3>
+                    <p>Comprehensive usage statistics and analytics for administrators.</p>
+                    <ul>
+                        <li>User activity statistics</li>
+                        <li>Revenue analytics</li>
+                        <li>Popular routes tracking</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-comments"></i> Scenario 5: User Feedback</h3>
+                    <p>Integrated feedback collection and management system.</p>
+                    <ul>
+                        <li>Feedback submission</li>
+                        <li>Rating system</li>
+                        <li>Feedback categorization</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> Scenario 6: Merchandise Purchase</h3>
+                    <p>Complete e-commerce functionality for merchandise sales.</p>
+                    <ul>
+                        <li>Product catalog browsing</li>
+                        <li>Shopping cart management</li>
+                        <li>Order processing & payment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ticket Booking Section -->
+    <section id="routes" class="section">
+        <div class="container">
+            <h2>Book Your Ticket</h2>
+            <div class="card">
+                <form id="ticketBookingForm">
+                    <div class="grid">
+                        <div class="form-group">
+                            <label for="origin">From:</label>
+                            <select id="origin" required>
+                                <option value="">Select Origin</option>
+                                <option value="Kuching Central">Kuching Central</option>
+                                <option value="Pending Station">Pending Station</option>
+                                <option value="Satok Bridge">Satok Bridge</option>
+                                <option value="Kuching Airport">Kuching Airport</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">To:</label>
+                            <select id="destination" required>
+                                <option value="">Select Destination</option>
+                                <option value="Kuching Central">Kuching Central</option>
+                                <option value="Pending Station">Pending Station</option>
+                                <option value="Satok Bridge">Satok Bridge</option>
+                                <option value="Kuching Airport">Kuching Airport</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="departureDate">Departure Date:</label>
+                            <input type="date" id="departureDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="departureTime">Departure Time:</label>
+                            <select id="departureTime" required>
+                                <option value="">Select Time</option>
+                                <option value="08:00">08:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                                <option value="18:00">06:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketType">Ticket Type:</label>
+                            <select id="ticketType" required>
+                                <option value="">Select Type</option>
+                                <option value="standard">Standard - RM 3.00</option>
+                                <option value="premium">Premium - RM 5.00</option>
+                                <option value="vip">VIP - RM 8.00</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search Routes</button>
+                </form>
+            </div>
+            
+            <div id="routeResults" class="hidden">
+                <h3>Available Routes</h3>
+                <div id="routeList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Merchandise Section -->
+    <section id="merchandise" class="section">
+        <div class="container">
+            <h2>Official Merchandise</h2>
+            
+            <div class="filters" style="margin-bottom: 2rem;">
+                <div class="grid" style="grid-template-columns: 1fr 1fr auto auto;">
+                    <div class="form-group">
+                        <label for="searchInput">Search:</label>
+                        <input type="text" id="searchInput" placeholder="Search merchandise...">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="souvenirs">Souvenirs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button id="checkoutBtn" class="btn btn-success">
+                            Checkout (RM <span id="cartTotal">0.00</span>)
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="cart-summary">
+                            Items: <span id="cartCount">0</span>
+                            <div id="cartItems"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="merchandiseGrid" class="merchandise-grid">
+                <!-- Merchandise items will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile" class="section">
+        <div class="container">
+            <h2>User Profile</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Account Information</h3>
+                    <p><strong>Name:</strong> <span id="profileName">-</span></p>
+                    <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+                    <p><strong>Loyalty Points:</strong> <span id="loyaltyPoints">0</span></p>
+                </div>
+                
+                <div class="card">
+                    <h3>Recent Activities</h3>
+                    <p>Your recent bookings and orders will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p style="margin-top: 1rem; text-align: center;">
+                <small>Demo credentials: test@example.com / password123</small>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Full Name:</label>
+                    <input type="text" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password:</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Phone Number:</label>
+                    <input type="tel" id="regPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="regAddress">Address:</label>
+                    <textarea id="regAddress" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+    </div>    <!-- Notifications -->
+    <div id="notifications" class="notifications"></div>    <!-- Scripts -->
+    <script src="js/demo-data.js"></script>
+    <script src="js/scenario-tester.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

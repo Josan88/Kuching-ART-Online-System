@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuching ART - Complete User Scenarios Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .scenario-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .scenario-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .scenario-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .scenario-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .scenario-btn:hover {
+            background: linear-gradient(45deg, #2980b9, #1f639a);
+            transform: translateY(-2px);
+        }
+
+        .scenario-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output-section {
+            margin: 30px;
+            background: #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .output-header {
+            background: #34495e;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+
+        .output-content {
+            height: 400px;
+            overflow-y: auto;
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .control-panel {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(45deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+        }
+
+        .success {
+            color: #27ae60;
+        }
+
+        .error {
+            color: #e74c3c;
+        }
+
+        .warning {
+            color: #f39c12;
+        }
+
+        .info {
+            color: #3498db;
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-pending { background: #f39c12; }
+        .status-running { background: #3498db; animation: pulse 1s infinite; }
+        .status-success { background: #27ae60; }
+        .status-error { background: #e74c3c; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚌 Kuching ART Online System</h1>
+            <p>Complete User Scenarios Demonstration</p>
+        </div>
+
+        <div class="scenarios-grid">
+            <div class="scenario-card">
+                <h3>👤 User Registration & Login</h3>
+                <p>Create a new user account and authenticate with the system to access personalized features.</p>
+                <button class="scenario-btn" onclick="runScenario('registration')" id="btn-registration">
+                    <span class="status-indicator status-pending"></span>
+                    Run Registration Demo
+                </button>
+            </div>
+
+            <div class="scenario-card">
+                <h3>🎫 Buy Ticket & Payment</h3>
+                <p>Browse available routes, book tickets for passengers, and complete the payment process.</p>
+                <button class="scenario-btn" onclick="runScenario('booking')" id="btn-booking">
+                    <span class="status-indicator status-pending"></span>
+                    Run Booking Demo
+                </button>
+            </div>
+
+            <div class="scenario-card">
+                <h3>❌ Cancel Trip & Refund</h3>
+                <p>Cancel an existing booking and process a refund back to the original payment method.</p>
+                <button class="scenario-btn" onclick="runScenario('cancellation')" id="btn-cancellation">
+                    <span class="status-indicator status-pending"></span>
+                    Run Cancellation Demo
+                </button>
+            </div>
+
+            <div class="scenario-card">
+                <h3>📊 Admin Usage Statistics</h3>
+                <p>Generate comprehensive system statistics including user metrics, revenue, and popular routes.</p>
+                <button class="scenario-btn" onclick="runScenario('statistics')" id="btn-statistics">
+                    <span class="status-indicator status-pending"></span>
+                    Run Statistics Demo
+                </button>
+            </div>
+
+            <div class="scenario-card">
+                <h3>💬 User Submit Feedback</h3>
+                <p>Submit customer feedback with ratings and comments to help improve the service quality.</p>
+                <button class="scenario-btn" onclick="runScenario('feedback')" id="btn-feedback">
+                    <span class="status-indicator status-pending"></span>
+                    Run Feedback Demo
+                </button>
+            </div>
+
+            <div class="scenario-card">
+                <h3>🛍️ Merchandise Purchase</h3>
+                <p>Browse the merchandise catalog, add items to cart, apply discounts, and complete purchase.</p>
+                <button class="scenario-btn" onclick="runScenario('merchandise')" id="btn-merchandise">
+                    <span class="status-indicator status-pending"></span>
+                    Run Shopping Demo
+                </button>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                📝 System Output Console
+            </div>
+            <div class="output-content" id="output-console">
+                <div class="info">🚀 Kuching ART Online System - Ready to demonstrate scenarios!</div>
+                <div class="info">📘 Click on any scenario button above to see the complete workflow.</div>
+                <div class="info">⚡ Each scenario demonstrates proper use of models and services.</div>
+                <div style="margin-top: 20px;">Waiting for user interaction...</div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <button class="control-btn" onclick="runAllScenarios()">
+                🎬 Run All Scenarios
+            </button>
+            <button class="control-btn" onclick="clearOutput()">
+                🗑️ Clear Output
+            </button>
+            <button class="control-btn" onclick="downloadOutput()">
+                💾 Download Log
+            </button>
+        </div>
+    </div>
+
+    <!-- Include the scenario scripts -->
+    <script type="module">
+        // Import the complete scenarios
+        import { 
+            userRegistrationAndLoginScenario,
+            buyTicketAndPaymentScenario,
+            cancelTripAndRefundScenario,
+            adminGeneratesUsageStatistics,
+            userSubmitFeedbackScenario,
+            merchandisePurchaseScenario,
+            runAllScenarios as runAllScenariosImport
+        } from './examples/complete-user-scenarios.js';
+
+        // Global variables
+        let currentUser = null;
+        let currentBooking = null;
+        let outputBuffer = [];
+
+        // Override console methods to capture output
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        function captureConsoleOutput() {
+            console.log = (...args) => {
+                originalConsole.log(...args);
+                appendToOutput(args.join(' '), 'info');
+            };
+
+            console.error = (...args) => {
+                originalConsole.error(...args);
+                appendToOutput(args.join(' '), 'error');
+            };
+
+            console.warn = (...args) => {
+                originalConsole.warn(...args);
+                appendToOutput(args.join(' '), 'warning');
+            };
+        }
+
+        function appendToOutput(message, type = 'info') {
+            const outputConsole = document.getElementById('output-console');
+            const timestamp = new Date().toLocaleTimeString();
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.innerHTML = `[${timestamp}] ${message}`;
+            outputConsole.appendChild(messageDiv);
+            outputConsole.scrollTop = outputConsole.scrollHeight;
+            
+            // Store in buffer for download
+            outputBuffer.push(`[${timestamp}] ${message}`);
+        }
+
+        function updateButtonStatus(buttonId, status) {
+            const button = document.getElementById(buttonId);
+            const indicator = button.querySelector('.status-indicator');
+            
+            indicator.className = `status-indicator status-${status}`;
+            
+            if (status === 'running') {
+                button.disabled = true;
+            } else {
+                button.disabled = false;
+            }
+        }
+
+        // Global functions for UI
+        window.runScenario = async function(scenarioType) {
+            const buttonId = `btn-${scenarioType}`;
+            updateButtonStatus(buttonId, 'running');
+            
+            try {
+                switch (scenarioType) {
+                    case 'registration':
+                        appendToOutput('🚀 Starting User Registration & Login Scenario...', 'info');
+                        currentUser = await userRegistrationAndLoginScenario();
+                        break;
+                        
+                    case 'booking':
+                        if (!currentUser) {
+                            appendToOutput('⚠️ Please run User Registration first!', 'warning');
+                            updateButtonStatus(buttonId, 'error');
+                            return;
+                        }
+                        appendToOutput('🎫 Starting Ticket Booking & Payment Scenario...', 'info');
+                        currentBooking = await buyTicketAndPaymentScenario(currentUser);
+                        break;
+                        
+                    case 'cancellation':
+                        if (!currentUser || !currentBooking) {
+                            appendToOutput('⚠️ Please run User Registration and Booking first!', 'warning');
+                            updateButtonStatus(buttonId, 'error');
+                            return;
+                        }
+                        appendToOutput('❌ Starting Trip Cancellation & Refund Scenario...', 'info');
+                        await cancelTripAndRefundScenario(currentUser, currentBooking);
+                        break;
+                        
+                    case 'statistics':
+                        appendToOutput('📊 Starting Admin Statistics Generation...', 'info');
+                        await adminGeneratesUsageStatistics();
+                        break;
+                        
+                    case 'feedback':
+                        if (!currentUser) {
+                            appendToOutput('⚠️ Please run User Registration first!', 'warning');
+                            updateButtonStatus(buttonId, 'error');
+                            return;
+                        }
+                        appendToOutput('💬 Starting User Feedback Submission...', 'info');
+                        await userSubmitFeedbackScenario(currentUser);
+                        break;
+                        
+                    case 'merchandise':
+                        if (!currentUser) {
+                            appendToOutput('⚠️ Please run User Registration first!', 'warning');
+                            updateButtonStatus(buttonId, 'error');
+                            return;
+                        }
+                        appendToOutput('🛍️ Starting Merchandise Purchase Scenario...', 'info');
+                        await merchandisePurchaseScenario(currentUser);
+                        break;
+                }
+                
+                updateButtonStatus(buttonId, 'success');
+                appendToOutput(`✅ ${scenarioType.charAt(0).toUpperCase() + scenarioType.slice(1)} scenario completed!`, 'success');
+                
+            } catch (error) {
+                updateButtonStatus(buttonId, 'error');
+                appendToOutput(`❌ Error in ${scenarioType} scenario: ${error.message}`, 'error');
+            }
+        };
+
+        window.runAllScenarios = async function() {
+            appendToOutput('🎬 Starting Complete User Journey - All Scenarios...', 'info');
+            
+            // Reset all button statuses
+            ['registration', 'booking', 'cancellation', 'statistics', 'feedback', 'merchandise'].forEach(scenario => {
+                updateButtonStatus(`btn-${scenario}`, 'pending');
+            });
+            
+            try {
+                await runAllScenariosImport();
+                appendToOutput('🎉 All scenarios completed successfully!', 'success');
+                
+                // Update all buttons to success
+                ['registration', 'booking', 'cancellation', 'statistics', 'feedback', 'merchandise'].forEach(scenario => {
+                    updateButtonStatus(`btn-${scenario}`, 'success');
+                });
+                
+            } catch (error) {
+                appendToOutput(`❌ Error running all scenarios: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearOutput = function() {
+            document.getElementById('output-console').innerHTML = `
+                <div class="info">🚀 Kuching ART Online System - Ready to demonstrate scenarios!</div>
+                <div class="info">📘 Click on any scenario button above to see the complete workflow.</div>
+                <div class="info">⚡ Each scenario demonstrates proper use of models and services.</div>
+                <div style="margin-top: 20px;">Output cleared - Waiting for user interaction...</div>
+            `;
+            outputBuffer = [];
+        };
+
+        window.downloadOutput = function() {
+            const content = outputBuffer.join('\n');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kuching-art-scenarios-${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        // Initialize console capture
+        captureConsoleOutput();
+        
+        // Welcome message
+        appendToOutput('🎯 System initialized and ready for demonstrations!', 'success');
+        appendToOutput('💡 Tip: Run scenarios in order for the best experience!', 'info');
+    </script>
+</body>
+</html>
