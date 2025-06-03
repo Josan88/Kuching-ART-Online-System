@@ -384,5 +384,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1000);
 });
-
-export default ScenarioTester;

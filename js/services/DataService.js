@@ -180,6 +180,78 @@ class DataService {
             console.error('Error getting storage info:', error);            return { used: 0, total: 0, percentage: 0, type: 'localStorage' };
         }
     }
+
+    /**
+     * Gets all records for a given collection
+     * @param {string} collection - Collection name
+     * @returns {Promise<Array>} - Array of records
+     */
+    async getAll(collection) {
+        try {
+            const data = await this.loadData(collection);
+            return data || [];
+        } catch (error) {
+            console.error(`Error getting all ${collection}:`, error);
+            return [];
+        }
+    }
+
+    /**
+     * Gets a record by ID from a collection
+     * @param {string} collection - Collection name
+     * @param {string} id - Record ID
+     * @returns {Promise<Object|null>} - Record or null if not found
+     */
+    async getById(collection, id) {
+        try {
+            const data = await this.getAll(collection);
+            return data.find(item => item.id === id || item.merchandiseID === id || item.userID === id) || null;
+        } catch (error) {
+            console.error(`Error getting ${collection} by ID:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Updates a record in a collection
+     * @param {string} collection - Collection name
+     * @param {string} id - Record ID
+     * @param {Object} updatedData - Updated data
+     * @returns {Promise<boolean>} - True if update successful
+     */
+    async update(collection, id, updatedData) {
+        try {
+            const data = await this.getAll(collection);
+            const index = data.findIndex(item => item.id === id || item.merchandiseID === id || item.userID === id);
+            
+            if (index !== -1) {
+                data[index] = { ...data[index], ...updatedData };
+                return await this.saveData(collection, data);
+            }
+            
+            return false;
+        } catch (error) {
+            console.error(`Error updating ${collection}:`, error);
+            return false;
+        }
+    }
+
+    /**
+     * Adds a record to a collection
+     * @param {string} collection - Collection name
+     * @param {Object} record - Record to add
+     * @returns {Promise<boolean>} - True if add successful
+     */
+    async add(collection, record) {
+        try {
+            const data = await this.getAll(collection);
+            data.push(record);
+            return await this.saveData(collection, data);
+        } catch (error) {
+            console.error(`Error adding to ${collection}:`, error);
+            return false;
+        }
+    }
 }
 
 export default DataService;
