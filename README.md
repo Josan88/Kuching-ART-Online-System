@@ -80,7 +80,8 @@ The Kuching ART Online System is a full-featured web application designed to pro
 │ • Forms         │    │ • Validations   │    │ • Entities      │
 │ • Components    │    │ • Workflows     │    │ • Relationships │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │                       ┌─────────────────┐
+                                │
+                       ┌─────────────────┐
                        │  Data Layer     │
                        │                 │
                        │ • localStorage  │
