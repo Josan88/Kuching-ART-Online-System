@@ -1,165 +1,83 @@
+// public/Kuching-ART-Online-System/js/Admin.js
+
 /**
- * Admin Class - Extends User for administrative functions
- * Handles system administration, statistics, and route management
+ * Return an array of all registered user‐emails.
+ * We assume each user was stored under:
+ *    localStorage.setItem(email, JSON.stringify({ password, … }));
  */
-import User from './User.js';
-
-class Admin extends User {
-    constructor(userID, userName, email, password, phoneNumber, address, adminLevel, department) {
-        super(userID, userName, email, password, phoneNumber, address);
-        this.adminLevel = adminLevel; // 1: Basic Admin, 2: Senior Admin, 3: Super Admin
-        this.department = department; // e.g., "Operations", "Customer Service", "IT"
-        this.lastLogin = null;
-        this.permissions = this.setPermissions(adminLevel);
+export function getAllUsers() {
+  const users = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key === 'loggedInUser') continue; // skip the “currently logged‐in” marker
+    try {
+      const val = JSON.parse(localStorage.getItem(key));
+      // If it looks like { password: "…" }, treat it as a user record
+      if (val && typeof val === 'object' && 'password' in val) {
+        users.push(key);
+      }
+    } catch {
+      // skip anything that isn't valid JSON / not a user object
     }
-
-    /**
-     * Sets admin permissions based on admin level
-     * @param {number} level - Admin level (1-3)
-     * @returns {Object} - Permissions object
-     */
-    setPermissions(level) {
-        const basePermissions = {
-            viewUsers: true,
-            viewOrders: true,
-            viewReports: true
-        };
-
-        if (level >= 2) {
-            basePermissions.manageRoutes = true;
-            basePermissions.manageMerchandise = true;
-            basePermissions.processRefunds = true;
-        }
-
-        if (level >= 3) {
-            basePermissions.manageAdmins = true;
-            basePermissions.systemSettings = true;
-            basePermissions.deleteData = true;
-        }
-
-        return basePermissions;
-    }
-
-    /**
-     * Generates system usage statistics
-     * @param {Date} startDate - Start date for statistics
-     * @param {Date} endDate - End date for statistics
-     * @returns {Object} - Statistics data
-     */
-    generateStatistics(startDate, endDate) {
-        if (!this.permissions.viewReports) {
-            throw new Error('Insufficient permissions to generate statistics');
-        }
-
-        // This would integrate with data storage in a real system
-        return {
-            period: { start: startDate, end: endDate },
-            totalUsers: 0,
-            totalOrders: 0,
-            totalRevenue: 0,
-            popularRoutes: [],
-            topMerchandise: [],
-            generatedBy: this.userName,
-            generatedAt: new Date()
-        };
-    }
-
-    /**
-     * Manages route information
-     * @param {string} action - Action to perform (create, update, delete)
-     * @param {Object} routeData - Route data
-     * @returns {boolean} - Success status
-     */
-    manageRoute(action, routeData) {
-        if (!this.permissions.manageRoutes) {
-            throw new Error('Insufficient permissions to manage routes');
-        }
-
-        try {
-            switch (action) {
-                case 'create':
-                    // Logic to create new route
-                    console.log('Creating new route:', routeData);
-                    return true;
-                case 'update':
-                    // Logic to update existing route
-                    console.log('Updating route:', routeData);
-                    return true;
-                case 'delete':
-                    // Logic to delete route
-                    console.log('Deleting route:', routeData.routeID);
-                    return true;
-                default:
-                    return false;
-            }
-        } catch (error) {
-            console.error('Error managing route:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Processes refund requests
-     * @param {string} orderID - Order ID to refund
-     * @param {string} reason - Reason for refund
-     * @returns {boolean} - Success status
-     */
-    processRefund(orderID, reason) {
-        if (!this.permissions.processRefunds) {
-            throw new Error('Insufficient permissions to process refunds');
-        }
-
-        try {
-            // Logic to process refund
-            console.log(`Processing refund for order ${orderID}. Reason: ${reason}`);
-            return true;
-        } catch (error) {
-            console.error('Error processing refund:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Records admin login
-     */
-    recordLogin() {
-        this.lastLogin = new Date();
-    }
-
-    /**
-     * Converts admin object to JSON for storage
-     * @returns {Object} - Admin data as plain object
-     */
-    toJSON() {
-        const userData = super.toJSON();
-        return {
-            ...userData,
-            adminLevel: this.adminLevel,
-            department: this.department,
-            lastLogin: this.lastLogin,
-            permissions: this.permissions
-        };
-    }
-
-    /**
-     * Creates Admin instance from JSON data
-     * @param {Object} data - Admin data from storage
-     * @returns {Admin} - New Admin instance
-     */
-    static fromJSON(data) {
-        const admin = new Admin(
-            data.userID,
-            data.userName,
-            data.email,
-            data.password,
-            data.phoneNumber,
-            data.address,
-            data.adminLevel,
-            data.department
-        );
-        admin.lastLogin = data.lastLogin ? new Date(data.lastLogin) : null;
-        return admin;
-    }
+  }
+  return users;
 }
 
-export default Admin;
+/**
+ * Remove a user from localStorage by email.
+ */
+export function deleteUser(email) {
+  localStorage.removeItem(email);
+}
+
+/**
+ * Return the total number of registered users.
+ */
+export function getTotalUsers() {
+  return getAllUsers().length;
+}
+
+/**
+ * Return a mock “total tickets issued” count.
+ * In a real application, replace this with a real API call.
+ */
+export function getTotalTickets() {
+  return 1234; // placeholder
+}
+
+/**
+ * Return a mock “total revenue” (in RM).
+ * In a real application, replace this with a real API call.
+ */
+export function getTotalRevenue() {
+  return 5678.90; // placeholder
+}
+
+/**
+ * Generate and display usage statistics in the “Usage Statistics” section.
+ * - Counts total users (from localStorage)
+ * - Picks a random number for “logins today”
+ * - Picks a random number for “total bookings”
+ */
+export function generateStats() {
+  const totalUsers = getTotalUsers();
+  const loginsToday = Math.floor(Math.random() * 20) + 1;      // random 1–20
+  const totalBookings = Math.floor(Math.random() * 100) + 30;  // random 30–129
+
+  const elTotalUsers = document.getElementById('totalUsers');
+  const elLoginsToday = document.getElementById('loginsToday');
+  const elTotalBookings = document.getElementById('totalBookings');
+
+  if (elTotalUsers) elTotalUsers.textContent = totalUsers;
+  if (elLoginsToday) elLoginsToday.textContent = loginsToday;
+  if (elTotalBookings) elTotalBookings.textContent = totalBookings;
+}
+
+/**
+ * Log out the current user by removing the “loggedInUser” key
+ * and redirecting to login.html.
+ */
+export function logout() {
+  localStorage.removeItem('loggedInUser');
+  window.location.href = 'login.html';
+}
