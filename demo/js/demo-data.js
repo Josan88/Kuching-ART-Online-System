@@ -75,7 +75,7 @@ const sampleMerchandise = [
         price: 25.00,
         category: 'clothing',
         stockQuantity: 50,
-        imageURL: 'https://via.placeholder.com/250x200/3498db/ffffff?text=ART+T-Shirt',
+        imageURL: '../../images/art-tshirt.jpg',
         isActive: true
     },
     {
@@ -85,27 +85,17 @@ const sampleMerchandise = [
         price: 12.00,
         category: 'accessories',
         stockQuantity: 30,
-        imageURL: 'https://via.placeholder.com/250x200/e74c3c/ffffff?text=Coffee+Mug',
+        imageURL: '../../images/art-mug.jpg',
         isActive: true
     },
     {
         merchandiseID: 'merch_3',
-        name: 'Kuching Keychain',
-        description: 'Souvenir keychain featuring Kuching landmarks and ART branding',
-        price: 8.00,
+        name: 'Kuching Model Train',
+        description: 'Detailed model train replica of the Kuching ART system',
+        price: 80.00,
         category: 'souvenirs',
         stockQuantity: 100,
-        imageURL: 'https://via.placeholder.com/250x200/2ecc71/ffffff?text=Keychain',
-        isActive: true
-    },
-    {
-        merchandiseID: 'merch_4',
-        name: 'ART Water Bottle',
-        description: 'Eco-friendly water bottle with ART logo',
-        price: 15.00,
-        category: 'accessories',
-        stockQuantity: 25,
-        imageURL: 'https://via.placeholder.com/250x200/9b59b6/ffffff?text=Water+Bottle',
+        imageURL: '../../images/art-model-train.jpg',
         isActive: true
     }
 ];
@@ -179,7 +169,7 @@ function initializeDemoData() {
         console.log('📊 Available test accounts:');
         console.log('   Regular User: test@example.com / password123');
         console.log('   Admin User: admin@example.com / admin123');
-        
+
         return true;
     } catch (error) {
         console.error('❌ Error initializing demo data:', error);
@@ -200,7 +190,7 @@ function clearDemoData() {
         localStorage.removeItem('kart_feedback');
         localStorage.removeItem('kart_payments');
         localStorage.removeItem('kart_session');
-        
+
         console.log('🗑️ Demo data cleared successfully!');
         return true;
     } catch (error) {

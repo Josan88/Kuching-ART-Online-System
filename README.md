@@ -1,5 +1,7 @@
 # Kuching ART Online System
 
+[![Node.js CI](https://github.com/Josan88/Kuching-ART-Online-System/actions/workflows/node.js.yml/badge.svg)](https://github.com/Josan88/Kuching-ART-Online-System/actions/workflows/node.js.yml)
+
 A comprehensive JavaScript-based transportation booking and merchandise management system for Kuching Autonomous Rapid Transit (ART) services.
 
 ## 📋 Table of Contents

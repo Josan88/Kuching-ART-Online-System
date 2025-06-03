@@ -8,6 +8,7 @@ import PaymentService from './services/PaymentService.js';
 import MerchandiseService from './services/MerchandiseService.js';
 import FeedbackService from './services/FeedbackService.js';
 import NotificationService from './services/NotificationService.js';
+import DataService from './services/DataService.js';
 
 class KuchingARTApp {
     constructor() {
@@ -17,12 +18,15 @@ class KuchingARTApp {
         this.ticketBookings = [];
         this.adminData = null;
         
-        // Initialize services
+        // Initialize data service first
+        this.dataService = new DataService();
+        
+        // Initialize services with dataService
         this.userService = new UserService();
         this.orderService = new OrderService();
         this.ticketService = new TicketService();
         this.paymentService = new PaymentService();
-        this.merchandiseService = new MerchandiseService();
+        this.merchandiseService = new MerchandiseService(this.dataService);
         this.feedbackService = new FeedbackService();
         this.notificationService = new NotificationService();
         
@@ -473,7 +477,9 @@ class KuchingARTApp {
     async loadInitialData() {
         try {
             // Load merchandise data from service
-            const merchandise = await this.merchandiseService.getAllMerchandise();
+            const merchandiseData = await this.merchandiseService.getAllMerchandise();
+            // Extract the merchandise array from the response object
+            const merchandise = merchandiseData.merchandise || [];
             this.displayMerchandise(merchandise);
         } catch (error) {
             console.error('Error loading initial data:', error);
@@ -491,7 +497,7 @@ class KuchingARTApp {
                 price: 25.00,
                 category: 'clothing',
                 stockQuantity: 50,
-                imageURL: 'https://via.placeholder.com/250x200?text=T-Shirt'
+                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+VC1TaGlydDwvdGV4dD48L3N2Zz4='
             },
             {
                 merchandiseID: '2',
@@ -500,7 +506,7 @@ class KuchingARTApp {
                 price: 12.00,
                 category: 'accessories',
                 stockQuantity: 30,
-                imageURL: 'https://via.placeholder.com/250x200?text=Mug'
+                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+TXVnPC90ZXh0Pjwvc3ZnPg=='
             },
             {
                 merchandiseID: '3',
@@ -509,15 +515,17 @@ class KuchingARTApp {
                 price: 8.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
-                imageURL: 'https://via.placeholder.com/250x200?text=Keychain'
+                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+S2V5Y2hhaW48L3RleHQ+PC9zdmc+'
             }
         ];
+        // Initialize sample data in storage
+        this.dataService.saveData('merchandise', sampleData);
         this.displayMerchandise(sampleData);
     }
 
     displayMerchandise(items) {
         const grid = document.getElementById('merchandiseGrid');
-        if (!grid) return;
+        if (!grid || !Array.isArray(items)) return;
         
         grid.innerHTML = items.map(item => `
             <div class="merchandise-item" data-testid="merchandise-${item.merchandiseID}">
@@ -539,8 +547,8 @@ class KuchingARTApp {
         const search = document.getElementById('searchInput').value;
         
         try {
-            const filtered = await this.merchandiseService.searchMerchandise({ category, search });
-            this.displayMerchandise(filtered);
+            const filteredData = await this.merchandiseService.searchMerchandise(search, { category });
+            this.displayMerchandise(filteredData);
         } catch (error) {
             console.error('Error filtering merchandise:', error);
         }
