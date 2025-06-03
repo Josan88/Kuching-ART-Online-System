@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -261,7 +262,15 @@
             </div>
         </div>    </footer>
 
-    <script src="js/app.js"></script>
-    <script src="js/booking.js"></script>
+        <!-- Load Ticket and Payment models as ES modules -->
+    <script type="module" src="js/models/Ticket.js"></script>
+    <script type="module" src="js/models/Payment.js"></script>
+
+    <!-- Load the service‐layer modules that depend on Ticket/Payment -->
+    <script type="module" src="js/services/TicketService.js"></script>
+    <script type="module" src="js/services/PaymentService.js"></script>
+
+    <!-- Finally, load your UI logic (booking.js); mark this as module so it can import from those four -->
+    <script type="module" src="js/booking.js"></script>
 </body>
 </html>
