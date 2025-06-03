@@ -2,15 +2,20 @@
   "name": "kuching-art-online-system",
   "version": "1.0.0",
   "description": "End-to-end tests for Kuching ART Online System",
-  "main": "js/app.js",
-  "scripts": {
+  "main": "js/app.js",  "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report",
-    "serve": "node server.js",
-    "test:ci": "npm run serve & sleep 3 && npm test && kill %1"
+    "serve": "npx http-server -p 8080 -c-1",
+    "test:ci": "npm run serve & sleep 3 && npm test && kill %1",
+    "demo": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\" --headed",
+    "demo:quick": "playwright test tests/integrated-demo.test.js --grep=\"Page loads correctly\" --project=\"Microsoft Edge\" --headed",
+    "demo:complete": "playwright test tests/integrated-demo.test.js --grep=\"six core scenarios\" --project=\"Microsoft Edge\" --headed",
+    "demo:scenarios": "playwright test tests/integrated-demo.test.js --grep=\"Scenario [1-6]\" --project=\"Microsoft Edge\" --headed",
+    "demo:headless": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\"",
+    "demo:report": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\" && playwright show-report"
   },
   "keywords": [
     "e2e",
