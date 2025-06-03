@@ -1,0 +1,28 @@
+{
+  "name": "kuching-art-online-system",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Kuching ART Online System",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "serve": "node server.js",
+    "test:ci": "npm run serve & sleep 3 && npm test && kill %1"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "playwright",
+    "transportation",
+    "ecommerce"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "http-server": "^14.1.1"
+  }
+}
