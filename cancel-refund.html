@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cancel Booking – Kuching ART</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
   <header>
@@ -16,7 +17,7 @@
       </div>
       <nav>
         <ul>
-          <<li><a href="index.html">Home</a></li>
+          <li><a href="index.html">Home</a></li>
           <li><a href="index.html#schedules">Schedules</a></li>
           <li><a href="index.html#routes">Routes</a></li>
           <li><a href="index.html#fares">Fares</a></li>
@@ -34,21 +35,37 @@
       <div class="booking-container">
         <h2 class="booking-title">Cancel Your Booking</h2>
         
-        <!-- Search Form for Booking Reference + Email -->
+        <!-- Search Form for Booking Reference + Name/Email -->
         <div class="booking-search">
           <form id="cancelSearchForm">
             <div class="form-group">
               <label for="cancelReference">Booking Reference</label>
-              <input type="text" id="cancelReference" name="cancelReference" placeholder="Enter your booking reference">
+              <input
+                type="text"
+                id="cancelReference"
+                name="cancelReference"
+                placeholder="Enter your booking reference"
+              />
             </div>
             <div class="form-group">
-              <label for="cancelEmail">Email Address</label>
-              <input type="email" id="cancelEmail" name="cancelEmail" placeholder="Enter email used for booking">
+              <label for="cancelEmail">Name</label>
+              <input
+                type="text"
+                id="cancelEmail"
+                name="cancelEmail"
+                placeholder="Enter the name used for booking"
+              />
             </div>
-            <button type="button" class="btn primary-btn" id="searchCancelBtn">Search</button>
+            <button
+              type="button"
+              class="btn primary-btn"
+              id="searchCancelBtn"
+            >
+              Search
+            </button>
           </form>
         </div>
-        
+
         <!-- Results Container (hidden until a successful search) -->
         <div id="cancel-results" style="display: none;">
           <h3>Booking Found</h3>
@@ -59,7 +76,12 @@
                 <p>Booked on: <span id="found-booking-date">—</span></p>
               </div>
               <div class="booking-status">
-                <span class="status-badge status-confirmed" id="found-booking-status">Confirmed</span>
+                <span
+                  class="status-badge status-confirmed"
+                  id="found-booking-status"
+                >
+                  Confirmed
+                </span>
               </div>
             </div>
             <div class="booking-details">
@@ -94,20 +116,42 @@
               </div>
             </div>
             <div class="booking-actions">
-              <button type="button" class="btn danger-btn" id="cancel-booking-btn">Cancel Booking</button>
+              <button
+                type="button"
+                class="btn danger-btn"
+                id="cancel-booking-btn"
+              >
+                Cancel Booking
+              </button>
             </div>
           </div>
         </div>
-        
+
         <!-- No Booking Found Message -->
         <div id="no-cancel-message" style="display: none;">
           <div class="message-container">
-            <i class="fas fa-search" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+            <i
+              class="fas fa-search"
+              style="font-size: 3rem; color: var(--primary-color);
+                     margin-bottom: 20px;"
+            ></i>
             <h3>No Booking Found</h3>
-            <p>We couldn't find any booking matching those details. Please double-check your booking reference and email.</p>
-            <p>If you've just made a booking, it may take a few minutes to appear.</p>
-            <p>For help, contact customer service at <strong>info@kuchingART.com</strong> or call <strong>+60 82-123456</strong>.</p>
-            <a href="booking.html" class="btn primary-btn">Book a New Trip</a>
+            <p>
+              We couldn't find any booking matching those details.
+              Please double-check your booking reference and name.
+            </p>
+            <p>
+              If you've just made a booking, it may take a few minutes
+              to appear.
+            </p>
+            <p>
+              For help, contact customer service at
+              <strong>info@kuchingART.com</strong>
+              or call <strong>+60 82-123456</strong>.
+            </p>
+            <a href="booking.html" class="btn primary-btn">
+              Book a New Trip
+            </a>
           </div>
         </div>
       </div>
@@ -130,41 +174,70 @@
         <div class="cancellation-policy">
           <h4>Cancellation Policy</h4>
           <ul>
-            <li>Cancellation 48 hours before departure: 100% refund</li>
+            <li>Cancellation ≥ 48 hours before departure: 100% refund</li>
             <li>Cancellation 24–48 hours before departure: 50% refund</li>
-            <li>Cancellation less than 24 hours before departure: No refund</li>
+            <li>Cancellation < 24 hours before departure: No refund</li>
           </ul>
         </div>
         
         <div class="current-booking">
-          <p><strong>Booking Reference:</strong> <span id="cancel-ref-modal">—</span></p>
+          <p>
+            <strong>Booking Reference:</strong>
+            <span id="cancel-ref-modal">—</span>
+          </p>
           <p><strong>From:</strong> <span id="cancel-from-modal">—</span></p>
-          <p><strong>To:</strong> <span id="cancel-to-modal">—</span></p>
+          <p><strong>To:</strong>   <span id="cancel-to-modal">—</span></p>
           <p><strong>Date:</strong> <span id="cancel-date-modal">—</span></p>
           <p><strong>Time:</strong> <span id="cancel-time-modal">—</span></p>
-          <p><strong>Refund Amount:</strong> <span id="cancel-refund-amount-modal">RM —</span></p>
+          <p>
+            <strong>Refund Amount:</strong>
+            <span id="cancel-refund-amount-modal">RM —</span>
+          </p>
         </div>
         
         <div class="refund-options">
           <h4>Refund Method</h4>
           <form id="refundForm">
             <div class="form-group">
-              <input type="radio" id="refund-original" name="refundMethod" value="original" checked>
-              <label for="refund-original">Refund to original payment method</label>
+              <input
+                type="radio"
+                id="refund-original"
+                name="refundMethod"
+                value="original"
+                checked
+              />
+              <label for="refund-original">
+                Refund to original payment method
+              </label>
             </div>
             <div class="form-group">
-              <input type="radio" id="refund-credit" name="refundMethod" value="credit">
+              <input
+                type="radio"
+                id="refund-credit"
+                name="refundMethod"
+                value="credit"
+              />
               <label for="refund-credit">Credit for future bookings</label>
             </div>
-            
             <div class="form-group">
               <label for="cancelReason">Reason for Cancellation (Optional)</label>
-              <textarea id="cancelReason" name="cancelReason" rows="3"></textarea>
+              <textarea
+                id="cancelReason"
+                name="cancelReason"
+                rows="3"
+              ></textarea>
             </div>
-            
             <div class="form-actions">
-              <button type="button" class="btn secondary-btn" id="back-from-cancel">Back</button>
-              <button type="submit" class="btn danger-btn">Confirm Cancellation</button>
+              <button
+                type="button"
+                class="btn secondary-btn"
+                id="back-from-cancel"
+              >
+                Back
+              </button>
+              <button type="submit" class="btn danger-btn">
+                Confirm Cancellation
+              </button>
             </div>
           </form>
         </div>
@@ -177,7 +250,11 @@
       <div class="footer-grid">
         <div class="footer-about">
           <h3>About Kuching ART</h3>
-          <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
+          <p>
+            Kuching Autonomous Rapid Transit is Sarawak’s premier public
+            transportation system, providing modern, efficient, and sustainable
+            mobility solutions for the people of Kuching.
+          </p>
         </div>
         <div class="footer-links">
           <h3>Quick Links</h3>
@@ -194,16 +271,20 @@
           <ul>
             <li><a href="booking.html">Book Tickets</a></li>
             <li><a href="manage-booking.html">Manage Bookings</a></li>
-            <li><a href="cancel.html">Refund Policy</a></li>
+            <li><a href="cancel-refund.html">Refund Policy</a></li>
             <li><a href="#">Terms of Service</a></li>
             <li><a href="#">Privacy Policy</a></li>
           </ul>
         </div>
         <div class="footer-newsletter">
           <h3>Newsletter</h3>
-          <p>Subscribe to our newsletter for updates and promotions.</p>
+          <p>Subscribe for updates and promotions.</p>
           <form>
-            <input type="email" placeholder="Your Email Address" required>
+            <input
+              type="email"
+              placeholder="Your Email Address"
+              required
+            />
             <button type="submit" class="btn">Subscribe</button>
           </form>
         </div>
@@ -214,7 +295,7 @@
     </div>
   </footer>
 
-  <script src="js/app.js"></script>
-  <script src="js/cancel.js"></script>
+  <!-- Include cancel.js as a module so it can import Route.js -->
+  <script type="module" src="../../js/models/cancel.js"></script>
 </body>
 </html>
