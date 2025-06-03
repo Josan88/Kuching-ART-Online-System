@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuching ART - Autonomous Rapid Transit</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Kuching ART</h1>
+                <p>Autonomous Rapid Transit</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="#schedules">Schedules</a></li>
+                    <li><a href="#routes">Routes</a></li>
+                    <li><a href="#fares">Fares</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="login.html" class="login-btn">Login / Register</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Welcome to Kuching's Autonomous Rapid Transit System</h2>
+                <p>Experience modern, efficient and eco-friendly public transportation in Kuching.</p>
+                <div class="hero-buttons">
+                    <a href="booking.html" class="btn primary-btn">Book a Ticket</a>
+                    <a href="#schedules" class="btn secondary-btn">View Schedules</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>Online Booking</h3>
+                    <p>Book your tickets online and avoid the queues. Easy and convenient!</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Route Planning</h3>
+                    <p>Plan your journey with our interactive route map and schedules.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Reschedule Tickets</h3>
+                    <p>Need to change your plans? Reschedule your tickets with ease.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Refund Options</h3>
+                    <p>Hassle-free refund process for canceled journeys.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="schedules" class="schedules">
+        <div class="container">
+            <h2 class="section-title">Transit Schedules</h2>
+            <div class="schedule-search">
+                <form>
+                    <div class="form-group">
+                        <label for="origin">Origin Station</label>
+                        <select id="origin" name="origin" required>
+                            <option value="">Select Origin</option>
+                            <option value="kuching-sentral">Kuching Sentral</option>
+                            <option value="satok">Satok</option>
+                            <option value="damai">Damai</option>
+                            <option value="petra-jaya">Petra Jaya</option>
+                            <option value="samarahan">Samarahan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="destination">Destination Station</label>
+                        <select id="destination" name="destination" required>
+                            <option value="">Select Destination</option>
+                            <option value="kuching-sentral">Kuching Sentral</option>
+                            <option value="satok">Satok</option>
+                            <option value="damai">Damai</option>
+                            <option value="petra-jaya">Petra Jaya</option>
+                            <option value="samarahan">Samarahan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <button type="button" class="btn primary-btn" onclick="searchSchedules()">Search</button>
+                </form>
+            </div>
+            <div id="schedule-results" class="schedule-results">
+                <!-- Schedule results will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="routes" class="routes">
+        <div class="container">
+            <h2 class="section-title">Our Routes</h2>
+            <div class="route-map">
+                <img src="images/route-map.png" alt="Kuching ART Route Map" class="img-responsive">
+                <p>Click on the map to view details of a specific route.</p>
+            </div>
+            <div class="route-list">
+                <div class="route-item">
+                    <h3>Blue Line</h3>
+                    <p>Kuching Sentral ↔ Satok ↔ Petra Jaya</p>
+                    <p>Operating Hours: 6:00 AM - 11:00 PM</p>
+                    <p>Frequency: Every 15 minutes during peak hours</p>
+                </div>
+                <div class="route-item">
+                    <h3>Red Line</h3>
+                    <p>Kuching Sentral ↔ Damai ↔ Samarahan</p>
+                    <p>Operating Hours: 6:30 AM - 10:30 PM</p>
+                    <p>Frequency: Every 20 minutes during peak hours</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="fares" class="fares">
+        <div class="container">
+            <h2 class="section-title">Fare Information</h2>
+            <div class="fare-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Distance</th>
+                            <th>Single Trip</th>
+                            <th>Day Pass</th>
+                            <th>Weekly Pass</th>
+                            <th>Monthly Pass</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0-5 km</td>
+                            <td>RM 2.00</td>
+                            <td rowspan="3">RM 10.00</td>
+                            <td rowspan="3">RM 45.00</td>
+                            <td rowspan="3">RM 150.00</td>
+                        </tr>
+                        <tr>
+                            <td>5-10 km</td>
+                            <td>RM 3.50</td>
+                        </tr>
+                        <tr>
+                            <td>10+ km</td>
+                            <td>RM 5.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>* Special discounts available for students, senior citizens, and persons with disabilities.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Headquarters: Kuching Sentral, Kuching, Sarawak</p>
+                    <p><i class="fas fa-phone"></i> Phone: +60 82-123456</p>
+                    <p><i class="fas fa-envelope"></i> Email: info@kuchingART.com</p>
+                    <div class="social-media">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn primary-btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>About Kuching ART</h3>
+                    <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#schedules">Schedules</a></li>
+                        <li><a href="#routes">Routes</a></li>
+                        <li><a href="#fares">Fares</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-service">
+                    <h3>Customer Services</h3>
+                    <ul>
+                        <li><a href="booking.html">Book Tickets</a></li>
+                        <li><a href="manage-booking.html">Manage Bookings</a></li>
+                        <li><a href="cancel-refund.html">Refund Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter for updates and promotions.</p>
+                    <form>
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit" class="btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kuching Autonomous Rapid Transit. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/schedules.js"></script>
+</body>
+</html>
