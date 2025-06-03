@@ -9,7 +9,7 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
   />
-  
+
 </head>
 <body>
   <!-- 1) Guard: only “admin@…” emails can view this page -->
@@ -29,7 +29,6 @@
       </div>
       <nav>
         <ul>
-          <li><a href="index.html">Home</a></li>
           <li><a href="#user-management" class="active">User Management</a></li>
           <li><a href="#usage-stats">Usage Stats</a></li>
           <li><a href="login.html" onclick="logout()">Logout</a></li>
@@ -37,11 +36,6 @@
       </nav>
     </div>
   </header>
-
-  <!-- Back link -->
-  <a href="index.html" class="back-link">
-    <i class="fas fa-arrow-left"></i> Back to Site
-  </a>
 
   <!-- User Management Section -->
   <section id="user-management" class="admin-container">

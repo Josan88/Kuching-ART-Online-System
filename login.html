@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login/Register - Kuching ART</title>
+  <title>Login/Register – Kuching ART</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
   <header>
@@ -21,6 +22,9 @@
           <li><a href="index.html#routes">Routes</a></li>
           <li><a href="index.html#fares">Fares</a></li>
           <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="cart.html" id="cart-link" style="position:relative;"><i
+                                class="fas fa-shopping-cart"></i> Cart <span id="cart-count"
+                                class="cart-badge">0</span></a></li>
           <li><a href="login.html" class="login-btn active">Login / Register</a></li>
         </ul>
       </nav>
@@ -100,7 +104,7 @@
       <div class="footer-grid">
         <div class="footer-about">
           <h3>About Kuching ART</h3>
-          <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
+          <p>Kuching Autonomous Rapid Transit is Sarawak’s premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
         </div>
         <div class="footer-links">
           <h3>Quick Links</h3>
@@ -137,7 +141,10 @@
     </div>
   </footer>
 
-  <script>
+  <!-- Convert this script to a module so we can import PointsLedger -->
+  <script type="module">
+    import PointsLedger from '../../js/models/PointsLedger.js';
+
     document.addEventListener('DOMContentLoaded', function () {
       const loginTab = document.getElementById('login-tab');
       const registerTab = document.getElementById('register-tab');
@@ -158,31 +165,47 @@
         loginTab.classList.remove('active');
       });
 
-      document.getElementById('show-register').addEventListener('click', () => registerTab.click());
-      document.getElementById('show-login').addEventListener('click', () => loginTab.click());
+      document.getElementById('show-register')
+              .addEventListener('click', () => registerTab.click());
+      document.getElementById('show-login')
+              .addEventListener('click', () => loginTab.click());
 
-      // Register
+      // — REGISTER —  
       document.getElementById('registerForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const confirm = document.getElementById('confirmPassword').value;
+        const email       = document.getElementById('registerEmail').value.trim().toLowerCase();
+        const password    = document.getElementById('registerPassword').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
 
-        if (password !== confirm) {
+        if (password !== confirmPass) {
           alert('Passwords do not match.');
           return;
         }
 
+        // Store user credentials (just password for now):
         localStorage.setItem(email, JSON.stringify({ password }));
-        localStorage.setItem("loggedInUser", email);
-        alert('Registration successful! Redirecting to homepage...');
-        window.location.href = "index.html"; // ✅ Redirect after registration
+        // Mark this user as “logged in”:
+        localStorage.setItem('loggedInUser', email);
+
+        // —— NEW: Create a fresh PointsLedger for this user ——
+        // Use their email as userID; use same for ledgerID
+        const ledgerID = `LEDGER-${Date.now()}`;
+        const userLedger = new PointsLedger(ledgerID, email);
+        // Persist it under a key like “ledger_<email>”
+        localStorage.setItem(
+          'ledger_' + email,
+          JSON.stringify(userLedger.toJSON())
+        );
+        // ————————————
+
+        alert('Registration successful! Redirecting …');
+        window.location.href = "index.html";
       });
 
-      // Login
+      // — LOGIN — 
       document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
+        const email    = document.getElementById('loginEmail').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value;
 
         const stored = localStorage.getItem(email);
@@ -190,12 +213,15 @@
           alert('User not found.');
           return;
         }
-
         const user = JSON.parse(stored);
         if (user.password === password) {
-          localStorage.setItem("loggedInUser", email);
-          alert('Login successful! Redirecting...');
-          window.location.href = "index.html"; // ✅ Redirect after login
+          localStorage.setItem('loggedInUser', email);
+          alert('Login successful! Redirecting …');
+          if (email.startsWith('admin@')) {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "index.html";
+          }
         } else {
           alert('Incorrect password.');
         }
