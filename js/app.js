@@ -548,7 +548,7 @@ class KuchingARTApp {
                 price: 25.00,
                 category: 'clothing',
                 stockQuantity: 50,
-                imageURL: 'images/art-tshirt.jpg',
+                imageURL: './images/art-tshirt.jpg',
                 isActive: true
             },
             {
@@ -558,7 +558,7 @@ class KuchingARTApp {
                 price: 12.00,
                 category: 'accessories',
                 stockQuantity: 30,
-                imageURL: 'images/art-mug.jpg',
+                imageURL: './images/art-mug.jpg',
                 isActive: true
             },
             {
@@ -568,7 +568,7 @@ class KuchingARTApp {
                 price: 8.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
-                imageURL: 'images/art-model-train.jpg',
+                imageURL: './images/art-model-train.jpg',
                 isActive: true
             }
         ];
