@@ -902,6 +902,15 @@ footer {
     right: -10px;
 }
 
+/* Merchandise item visibility states for filtering */
+.merchandise-item.hidden {
+    display: none !important;
+}
+
+.merchandise-item:not(.hidden) {
+    display: initial;
+}
+
 /* admin.css */
 
 /* Global resets and base styles (if not already defined) */

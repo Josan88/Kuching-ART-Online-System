@@ -80,14 +80,33 @@ class KuchingARTApp {
 
         if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         if (registerForm) registerForm.addEventListener('submit', (e) => this.handleRegister(e));
-        if (ticketBookingForm) ticketBookingForm.addEventListener('submit', (e) => this.handleTicketSearch(e));
-
-        // Merchandise filters
+        if (ticketBookingForm) ticketBookingForm.addEventListener('submit', (e) => this.handleTicketSearch(e));        // Merchandise filters
         const categoryFilter = document.getElementById('categoryFilter');
         const searchInput = document.getElementById('searchInput');
 
-        if (categoryFilter) categoryFilter.addEventListener('change', () => this.filterMerchandise());
-        if (searchInput) searchInput.addEventListener('input', () => this.filterMerchandise());
+        if (categoryFilter) {
+            console.log('Setting up category filter event listener');
+            // Remove existing listeners to avoid duplicates
+            categoryFilter.removeEventListener('change', this.filterMerchandise.bind(this));
+            categoryFilter.addEventListener('change', () => {
+                console.log('Category filter changed to:', categoryFilter.value);
+                this.filterMerchandise();
+            });
+        } else {
+            console.log('Category filter element not found');
+        }
+
+        if (searchInput) {
+            console.log('Setting up search input event listener');
+            // Remove existing listeners to avoid duplicates
+            searchInput.removeEventListener('input', this.filterMerchandise.bind(this));
+            searchInput.addEventListener('input', () => {
+                console.log('Search input changed to:', searchInput.value);
+                this.filterMerchandise();
+            });
+        } else {
+            console.log('Search input element not found');
+        }
 
         // Checkout
         const checkoutBtn = document.getElementById('checkoutBtn');
@@ -300,7 +319,12 @@ class KuchingARTApp {
         adminBtn.style.display = 'none';
         adminBtn.addEventListener('click', () => this.showAdminPanel());
 
-        document.querySelector('.nav').appendChild(adminBtn);
+        const nav = document.querySelector('.nav');
+        if (nav) {
+            nav.appendChild(adminBtn);
+        } else {
+            console.warn('Admin button not added: .nav element not found');
+        }
     }
 
     async showAdminPanel() {
@@ -504,12 +528,10 @@ class KuchingARTApp {
             console.error('Error loading initial data from service. Falling back to sample merchandise.', error);
             this.loadSampleMerchandise();
         }
-    }
-
-    loadSampleMerchandise() {
+    } loadSampleMerchandise() {
         const sampleData = [
             {
-                merchandiseID: 'merch_1',
+                merchandiseID: '1',
                 name: 'Kuching ART T-Shirt',
                 description: 'Official Kuching ART branded t-shirt made from premium cotton',
                 price: 25.00,
@@ -519,7 +541,7 @@ class KuchingARTApp {
                 isActive: true
             },
             {
-                merchandiseID: 'merch_2',
+                merchandiseID: '2',
                 name: 'ART Coffee Mug',
                 description: 'Ceramic coffee mug with ART logo, perfect for your morning coffee',
                 price: 12.00,
@@ -529,10 +551,10 @@ class KuchingARTApp {
                 isActive: true
             },
             {
-                merchandiseID: 'merch_3',
-                name: 'Kuching Model Train',
-                description: 'Detailed model train replica of the Kuching ART system',
-                price: 80.00,
+                merchandiseID: '3',
+                name: 'Kuching ART Model Train',
+                description: 'Souvenir model train featuring Kuching landmarks',
+                price: 8.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
                 imageURL: 'images/art-model-train.jpg',
@@ -561,15 +583,70 @@ class KuchingARTApp {
                 </div>
             </div>
         `).join('');
-    }
+    } async filterMerchandise() {
+        const category = document.getElementById('categoryFilter')?.value;
+        const search = document.getElementById('searchInput')?.value;
 
-    async filterMerchandise() {
-        const category = document.getElementById('categoryFilter').value;
-        const search = document.getElementById('searchInput').value;
+        console.log('filterMerchandise called with category:', category, 'search:', search);
 
         try {
-            const filteredData = await this.merchandiseService.searchMerchandise(search, { category });
-            this.displayMerchandise(filteredData);
+            // Get all merchandise items from DOM
+            const allItems = document.querySelectorAll('.merchandise-item');
+            console.log('Found DOM items:', allItems.length);
+
+            if (!category && !search) {
+                // Show all items
+                allItems.forEach(item => {
+                    item.style.display = '';
+                });
+                return;
+            }            // Get all merchandise data for filtering
+            const allMerchandise = await this.merchandiseService.getAllMerchandise({});
+            const merchandiseData = allMerchandise.merchandise || allMerchandise;
+            console.log('All merchandise data:', merchandiseData);
+
+            // Filter the data based on category and search
+            const filteredData = merchandiseData.filter(item => {
+                let matches = true;
+
+                // Category filter
+                if (category && item.category !== category) {
+                    matches = false;
+                }
+
+                // Search filter
+                if (search) {
+                    const searchTerm = search.toLowerCase();
+                    const textMatch =
+                        item.name.toLowerCase().includes(searchTerm) ||
+                        item.description.toLowerCase().includes(searchTerm) ||
+                        item.category.toLowerCase().includes(searchTerm);
+                    if (!textMatch) {
+                        matches = false;
+                    }
+                }
+
+                return matches;
+            });
+
+            console.log('Filtered data:', filteredData);
+            const filteredIds = new Set(filteredData.map(item => item.merchandiseID));
+            console.log('Filtered IDs:', filteredIds);
+
+            // Show/hide items based on filter results
+            allItems.forEach(item => {
+                const testId = item.getAttribute('data-testid');
+                if (testId) {
+                    const itemId = testId.replace('merchandise-', '');
+                    if (filteredIds.has(itemId)) {
+                        item.style.display = '';
+                        console.log('Showing item:', itemId);
+                    } else {
+                        item.style.display = 'none';
+                        console.log('Hiding item:', itemId);
+                    }
+                }
+            });
         } catch (error) {
             console.error('Error filtering merchandise:', error);
         }
@@ -754,27 +831,41 @@ class KuchingARTApp {
             if (userProfile) userProfile.classList.add('hidden');
             if (adminBtn) adminBtn.style.display = 'none';
         }
-    }
+    } showNotification(message, type = 'info') {
+        // Try to find the notification div (for merchandise page)
+        let notification = document.getElementById('notification');
 
-    showNotification(message, type = 'info') {
-        const notifications = document.getElementById('notifications');
-        if (!notifications) return;
+        if (notification) {
+            // Use existing notification div
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            notification.setAttribute('data-notification', 'true');
 
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        } else {
+            // Fallback to creating notifications dynamically
+            const notifications = document.getElementById('notifications');
+            if (!notifications) return;
 
-        const uniqueId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        notification.setAttribute('data-testid', uniqueId);
-        notification.setAttribute('data-notification', 'true');
+            const newNotification = document.createElement('div');
+            newNotification.className = `notification ${type}`;
+            newNotification.textContent = message;
 
-        notifications.appendChild(notification);
+            const uniqueId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            newNotification.setAttribute('data-testid', uniqueId);
+            newNotification.setAttribute('data-notification', 'true');
 
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 5000);
+            notifications.appendChild(newNotification);
+
+            setTimeout(() => {
+                if (newNotification.parentNode) {
+                    newNotification.remove();
+                }
+            }, 5000);
+        }
     }
 }
 

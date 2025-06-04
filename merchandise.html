@@ -7,7 +7,7 @@
     <title>Merchandise - Kuching ART</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
 </head>
 
 <body>
@@ -26,7 +26,7 @@
                     <li><a href="index.html#fares">Fares</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
                     <li><a href="merchandise.html" class="active">Merchandise</a></li>
-                    <li><a href="login.html" class="login-btn">Login / Register</a></li>
+                    <li><a href="#" class="login-btn" onclick="app.showModal('loginModal')">Login / Register</a></li>
                 </ul>
             </nav>
         </div>
@@ -35,7 +35,7 @@
     <section id="merchandise" class="section">
         <div class="container">
             <h2>Official Merchandise</h2>
-            
+
             <div class="filters" style="margin-bottom: 2rem;">
                 <div class="grid" style="grid-template-columns: 1fr 1fr auto auto;">
                     <div class="form-group">
@@ -66,19 +66,88 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="merchandiseGrid" class="merchandise-grid">
                 <!-- Merchandise items will be loaded here -->
             </div>
+
+            <!-- Shopping Cart Section -->
+            <section id="shopping-cart-section" class="cart-section"
+                style="margin-top: 2rem; padding: 1rem; border: 1px solid #ddd; border-radius: 5px;">
+                <h3>Shopping Cart</h3>
+                <div id="shopping-cart-items">
+                    <!-- Cart items will appear here -->
+                </div>
+                <div class="cart-totals" style="margin-top: 1rem; text-align: right;">
+                    <strong>Total: RM <span id="cart-total-display">0.00</span></strong>
+                </div>
+            </section>
         </div>
     </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+            </form>
+            <button type="submit" form="loginForm" class="btn btn-primary">Login</button>
+            <p style="margin-top: 1rem; text-align: center;">
+                <small>Demo credentials: test@example.com / password123</small>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Full Name:</label>
+                    <input type="text" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password:</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Phone Number:</label>
+                    <input type="tel" id="regPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="regAddress">Address:</label>
+                    <textarea id="regAddress" rows="3" required></textarea>
+                </div>
+            </form>
+            <button type="submit" form="registerForm" class="btn btn-primary">Register</button>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="notification" data-notification="true" style="display: none;"></div>
 
     <footer>
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-about">
                     <h3>About Kuching ART</h3>
-                    <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
+                    <p>Kuching Autonomous Rapid Transit is Sarawak's premier public transportation system, providing
+                        modern, efficient, and sustainable mobility solutions for the people of Kuching.</p>
                 </div>
                 <div class="footer-links">
                     <h3>Quick Links</h3>
@@ -117,4 +186,5 @@
 
     <script type="module" src="js/app.js"></script>
 </body>
+
 </html>

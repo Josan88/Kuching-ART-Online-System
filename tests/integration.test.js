@@ -154,12 +154,11 @@ test.describe('Integration Tests - Complete User Journeys', () => {
     // Add multiple items to cart
     await artPage.addMerchandiseToCart('1'); // T-Shirt RM 25.00
     await artPage.waitForNotification('Kuching ART T-Shirt added to cart!');
-    
-    await artPage.addMerchandiseToCart('2'); // Mug RM 12.00
+      await artPage.addMerchandiseToCart('2'); // Mug RM 12.00
     await artPage.waitForNotification('ART Coffee Mug added to cart!');
     
-    await artPage.addMerchandiseToCart('3'); // Keychain RM 8.00
-    await artPage.waitForNotification('Kuching Keychain added to cart!');
+    await artPage.addMerchandiseToCart('3'); // Model Train RM 8.00
+    await artPage.waitForNotification('Kuching ART Model Train added to cart!');
 
     // Verify cart state
     await expect(artPage.cartCount).toHaveText('3');
@@ -231,17 +230,15 @@ test.describe('Integration Tests - Complete User Journeys', () => {
 
     // Add accessory item
     await artPage.addMerchandiseToCart('2');
-    await artPage.waitForNotification('ART Coffee Mug added to cart!');
-
-    // Use search instead of category filter
+    await artPage.waitForNotification('ART Coffee Mug added to cart!');    // Use search instead of category filter
     await artPage.categoryFilter.selectOption(''); // Reset category
-    await artPage.searchInput.fill('keychain');
+    await artPage.searchInput.fill('model train');
     await page.waitForTimeout(300);
     await expect(page.locator('.merchandise-item:visible')).toHaveCount(1);
 
     // Add searched item
     await artPage.addMerchandiseToCart('3');
-    await artPage.waitForNotification('Kuching Keychain added to cart!');
+    await artPage.waitForNotification('Kuching ART Model Train added to cart!');
 
     // Verify cart
     await expect(artPage.cartCount).toHaveText('3');
@@ -365,12 +362,10 @@ test.describe('Integration Tests - Complete User Journeys', () => {
     await artPage.categoryFilter.selectOption('clothing');
     await page.waitForTimeout(300);
     await artPage.addMerchandiseToCart('1');
-    await artPage.waitForNotification('Kuching ART T-Shirt added to cart!');
-
-    await artPage.categoryFilter.selectOption('souvenirs');
+    await artPage.waitForNotification('Kuching ART T-Shirt added to cart!');    await artPage.categoryFilter.selectOption('souvenirs');
     await page.waitForTimeout(300);
     await artPage.addMerchandiseToCart('3');
-    await artPage.waitForNotification('Kuching Keychain added to cart!');
+    await artPage.waitForNotification('Kuching ART Model Train added to cart!');
 
     await artPage.checkoutBtn.click();
     await artPage.waitForNotification('Order placed successfully! Total: RM 33.00');
