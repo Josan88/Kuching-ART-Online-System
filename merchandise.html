@@ -7,9 +7,11 @@
     <title>Merchandise - Kuching ART</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
 </head>
 
 <body>
+    <div id="notifications"></div>
     <header>
         <div class="container">
             <div class="logo">
@@ -23,7 +25,6 @@
                     <li><a href="index.html#routes">Routes</a></li>
                     <li><a href="index.html#fares">Fares</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
-                    <li><a href="feedback.html">Feedback</a></li>
                     <li><a href="merchandise.html" class="active">Merchandise</a></li>
                     <li><a href="login.html" class="login-btn">Login / Register</a></li>
                 </ul>
@@ -31,28 +32,44 @@
         </div>
     </header>
 
-    <section class="merchandise-section">
+    <section id="merchandise" class="section">
         <div class="container">
-            <h2 class="section-title">Official Kuching ART Merchandise</h2>
-            <div id="merchandise-grid" class="merchandise-grid">
-                <!-- Merchandise items will be loaded dynamically -->
+            <h2>Official Merchandise</h2>
+            
+            <div class="filters" style="margin-bottom: 2rem;">
+                <div class="grid" style="grid-template-columns: 1fr 1fr auto auto;">
+                    <div class="form-group">
+                        <label for="searchInput">Search:</label>
+                        <input type="text" id="searchInput" placeholder="Search merchandise...">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="souvenirs">Souvenirs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button id="checkoutBtn" class="btn btn-success">
+                            Checkout (RM <span id="cartTotal">0.00</span>)
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="cart-summary">
+                            Items: <span id="cartCount">0</span>
+                            <div id="cartItems"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p id="no-merchandise-message" style="display:none; text-align:center; padding: 20px;">
-                No merchandise items currently available.
-            </p>
-        </div>
-    </section>
-
-    <section class="cart-section" id="shopping-cart-section">
-        <div class="container">
-            <h2 class="section-title">Your Shopping Cart</h2>
-            <div id="cart-items-container">
-                <!-- Cart items will be displayed here -->
+            
+            <div id="merchandiseGrid" class="merchandise-grid">
+                <!-- Merchandise items will be loaded here -->
             </div>
-            <div id="cart-summary" style="display:none;">
-                <!-- Cart summary will be displayed here -->
-            </div>
-            <p id="empty-cart-message" style="text-align:center; padding: 20px;">Your cart is empty. Add some items from the merchandise section above!</p>
         </div>
     </section>
 
@@ -99,6 +116,5 @@
     </footer>
 
     <script type="module" src="js/app.js"></script>
-
 </body>
 </html>

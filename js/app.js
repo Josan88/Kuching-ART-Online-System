@@ -491,14 +491,17 @@ class KuchingARTApp {
     // SCENARIO 6: Merchandise Purchase
     async loadInitialData() {
         try {
-            // Load merchandise data from service
             const merchandiseData = await this.merchandiseService.getAllMerchandise();
-            // Extract the merchandise array from the response object
-            const merchandise = merchandiseData.merchandise || [];
-            this.displayMerchandise(merchandise);
+            let merchandise = (merchandiseData && merchandiseData.merchandise) ? merchandiseData.merchandise : [];
+
+            if (!merchandise || merchandise.length === 0) {
+                console.log("No merchandise found from service or storage. Loading sample merchandise.");
+                this.loadSampleMerchandise();
+            } else {
+                this.displayMerchandise(merchandise);
+            }
         } catch (error) {
-            console.error('Error loading initial data:', error);
-            // Fallback to sample data
+            console.error('Error loading initial data from service. Falling back to sample merchandise.', error);
             this.loadSampleMerchandise();
         }
     }
@@ -506,31 +509,34 @@ class KuchingARTApp {
     loadSampleMerchandise() {
         const sampleData = [
             {
-                merchandiseID: '1',
+                merchandiseID: 'merch_1',
                 name: 'Kuching ART T-Shirt',
-                description: 'Official Kuching ART branded t-shirt',
+                description: 'Official Kuching ART branded t-shirt made from premium cotton',
                 price: 25.00,
                 category: 'clothing',
                 stockQuantity: 50,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+VC1TaGlydDwvdGV4dD48L3N2Zz4='
+                imageURL: 'images/art-tshirt.jpg',
+                isActive: true
             },
             {
-                merchandiseID: '2',
+                merchandiseID: 'merch_2',
                 name: 'ART Coffee Mug',
-                description: 'Ceramic coffee mug with ART logo',
+                description: 'Ceramic coffee mug with ART logo, perfect for your morning coffee',
                 price: 12.00,
                 category: 'accessories',
                 stockQuantity: 30,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+TXVnPC90ZXh0Pjwvc3ZnPg=='
+                imageURL: 'images/art-mug.jpg',
+                isActive: true
             },
             {
-                merchandiseID: '3',
-                name: 'Kuching Keychain',
-                description: 'Souvenir keychain featuring Kuching landmarks',
-                price: 8.00,
+                merchandiseID: 'merch_3',
+                name: 'Kuching Model Train',
+                description: 'Detailed model train replica of the Kuching ART system',
+                price: 80.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+S2V5Y2hhaW48L3RleHQ+PC9zdmc+'
+                imageURL: 'images/art-model-train.jpg',
+                isActive: true
             }
         ];
         // Initialize sample data in storage
@@ -781,6 +787,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
+    }
+    if (document.getElementById('merchandise')) {
+        window.app.showSection('merchandise');
     }
 });
 
