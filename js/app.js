@@ -548,7 +548,7 @@ class KuchingARTApp {
                 price: 25.00,
                 category: 'clothing',
                 stockQuantity: 50,
-                imageURL: 'images/art-tshirt.jpg',
+                imageURL: './images/art-tshirt.jpg',
                 isActive: true
             },
             {
@@ -558,7 +558,7 @@ class KuchingARTApp {
                 price: 12.00,
                 category: 'accessories',
                 stockQuantity: 30,
-                imageURL: 'images/art-mug.jpg',
+                imageURL: './images/art-mug.jpg',
                 isActive: true
             },
             {
@@ -568,7 +568,7 @@ class KuchingARTApp {
                 price: 8.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
-                imageURL: 'images/art-model-train.jpg',
+                imageURL: './images/art-model-train.jpg',
                 isActive: true
             }
         ];
@@ -682,6 +682,25 @@ class KuchingARTApp {
         }
     }
 
+    removeFromCart(merchandiseID) {
+        const itemIndex = this.cart.findIndex(cartItem => cartItem.merchandiseID === merchandiseID);
+
+        if (itemIndex > -1) {
+            const item = this.cart[itemIndex];
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+                this.showNotification(`${item.name} quantity updated in cart.`, 'info');
+            } else {
+                this.cart.splice(itemIndex, 1);
+                this.showNotification(`${item.name} removed from cart.`, 'info');
+            }
+            this.updateCart();
+        } else {
+            this.showNotification('Item not found in cart.', 'error');
+            console.error(`Attempted to remove item with ID ${merchandiseID} not found in cart.`);
+        }
+    }
+
     async handleMerchandiseCheckout() {
         if (this.cart.length === 0) {
             this.showNotification('Your cart is empty', 'error');
@@ -780,12 +799,28 @@ class KuchingARTApp {
             cartCount.textContent = totalItems;
             cartTotal.textContent = totalPrice.toFixed(2);
 
-            cartItems.innerHTML = this.cart.map(item => `
-                <div class="cart-item">
-                    <span>${item.name} x${item.quantity}</span>
-                    <span>RM ${(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-            `).join('');
+            if (this.cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                cartItems.innerHTML = this.cart.map(item => `
+                    <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                        <div style="flex-grow: 1;">
+                            ${item.name} (x${item.quantity})
+                            <br>
+                            <small>RM ${item.price.toFixed(2)} each</small>
+                        </div>
+                        <span style="font-weight: bold; margin-right: 10px;">RM ${(item.price * item.quantity).toFixed(2)}</span>
+                        <button 
+                            class="btn btn-danger btn-sm" 
+                            onclick="app.removeFromCart('${item.merchandiseID}')" 
+                            data-testid="remove-cart-item-${item.merchandiseID}"
+                            style="padding: 2px 5px; font-size: 0.8em;"
+                            title="Remove ${item.name}">
+                            Remove
+                        </button>
+                    </div>
+                `).join('');
+            }
         }
     }
 
