@@ -9,10 +9,9 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
   />
-
 </head>
 <body>
-  <!-- 1) Guard: only “admin@…” emails can view this page -->
+  <!-- Guard: only “admin@…” emails can view this page -->
   <script>
     const loggedInEmail = localStorage.getItem('loggedInUser');
     if (!loggedInEmail || !loggedInEmail.startsWith('admin@')) {
@@ -30,14 +29,14 @@
       <nav>
         <ul>
           <li><a href="#user-management" class="active">User Management</a></li>
-          <li><a href="#usage-stats">Usage Stats</a></li>
+          <li><a href="#sales-report">Sales Report</a></li>
           <li><a href="login.html" onclick="logout()">Logout</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- User Management Section -->
+  <!-- 1) User Management Section -->
   <section id="user-management" class="admin-container">
     <div class="admin-header">
       <h1><i class="fas fa-cogs"></i> Kuching ART Admin Panel</h1>
@@ -87,42 +86,25 @@
     </section>
   </section>
 
-  <!-- Usage Statistics Section -->
-  <section id="usage-stats" class="stats-container">
-    <h2>Usage Statistics</h2>
+  <!-- 2) Sales Report Section -->
+  <section id="sales-report" class="stats-container">
+    <h2>Sales Report</h2>
+    <button class="generate-btn" onclick="generateSalesReport()">Generate Sales Report</button>
 
-    <div class="stat-box">
-      <div class="stat-label">Total Registered Users:</div>
-      <div id="totalUsers">Loading...</div>
+    <div id="sales-report-output" style="margin-top: 1rem;">
+      <!-- Will be populated by JavaScript -->
     </div>
-
-    <div class="stat-box">
-      <div class="stat-label">Total Logins Today:</div>
-      <div id="loginsToday">Loading...</div>
-    </div>
-
-    <div class="stat-box">
-      <div class="stat-label">Total Bookings (mock):</div>
-      <div id="totalBookings">Loading...</div>
-    </div>
-
-    <button class="generate-btn" onclick="generateStats()">Generate Report</button>
   </section>
 
-  <!-- Import and use the Admin.js module from two levels up -->
+  <!-- Import Admin.js from two levels up -->
   <script type="module">
     import {
       getAllUsers,
       deleteUser,
-      getTotalUsers,
-      getTotalTickets,
-      getTotalRevenue,
-      generateStats,
       logout
     } from '../../js/models/Admin.js';
 
-    // Expose generateStats() and logout() so the HTML can call them
-    window.generateStats = generateStats;
+    // Expose for HTML
     window.logout = logout;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -144,10 +126,38 @@
       });
 
       // 2) Show system statistics
-      document.getElementById('total-users').textContent = getTotalUsers();
-      document.getElementById('total-tickets').textContent = getTotalTickets();
+      // Total Users
+      document.getElementById('total-users').textContent = users.length;
+
+      // Compute Total Tickets Issued & Total Revenue from localStorage “orders”
+      const raw = localStorage.getItem('orders');
+      let allOrders = [];
+      try {
+        if (raw) allOrders = JSON.parse(raw);
+      } catch {
+        allOrders = [];
+      }
+
+      let ticketCount = 0;
+      let totalRevenue = 0;
+      allOrders.forEach(o => {
+        // Count only paid/completed orders
+        if (o.paymentStatus === 'paid' || o.paymentStatus === 'completed') {
+          // Sum up number of tickets (either via orderItems or passengers)
+          if (Array.isArray(o.orderItems)) {
+            o.orderItems.forEach(item => {
+              ticketCount += item.quantity;
+            });
+          } else {
+            ticketCount += (o.passengers || 0);
+          }
+          totalRevenue += (o.totalFare || o.totalAmount || 0);
+        }
+      });
+
+      document.getElementById('total-tickets').textContent = ticketCount;
       document.getElementById('total-revenue').textContent =
-        `RM ${getTotalRevenue().toFixed(2)}`;
+        `RM ${totalRevenue.toFixed(2)}`;
 
       // 3) Wire up “Delete” buttons
       document.querySelectorAll('.delete-btn').forEach(btn => {
@@ -160,10 +170,109 @@
           }
         });
       });
-
-      // 4) Optionally generate usage stats immediately:
-      generateStats();
     });
+  </script>
+
+  <!-- The Sales‐Report script -->
+  <script type="module">
+    import OrderItem from '../../js/models/OrderItem.js';
+    import Order     from '../../js/models/Order.js';
+
+    window.generateSalesReport = () => {
+      const outputDiv = document.getElementById('sales-report-output');
+      outputDiv.innerHTML = ''; // clear previous report
+
+      // 1) Retrieve all orders from localStorage
+      const raw = localStorage.getItem('orders');
+      if (!raw) {
+        outputDiv.innerHTML = '<p>No orders found in the system.</p>';
+        return;
+      }
+      let allOrders;
+      try {
+        allOrders = JSON.parse(raw);
+      } catch {
+        outputDiv.innerHTML = '<p>Error reading orders data.</p>';
+        return;
+      }
+
+      // 2) Initialize aggregation maps
+      let totalRevenue   = 0;
+      let totalRefunds   = 0;
+      let cancelCount    = 0;
+      const quantityByRoute = {};
+      const revenueByRoute  = {};
+
+      // 3) Iterate through each order
+      allOrders.forEach(o => {
+        if (o.status === 'cancelled') {
+          cancelCount++;
+        }
+        if (o.paymentStatus === 'refunded') {
+          totalRefunds += (o.refundAmount || 0);
+        }
+        if (o.paymentStatus === 'paid' || o.paymentStatus === 'completed') {
+          totalRevenue += o.totalFare || o.totalAmount || 0;
+          const routeID = o.routeID;
+          if (!(routeID in quantityByRoute)) {
+            quantityByRoute[routeID] = 0;
+            revenueByRoute[routeID]  = 0;
+          }
+          if (Array.isArray(o.orderItems)) {
+            o.orderItems.forEach(item => {
+              quantityByRoute[routeID] += item.quantity;
+            });
+          } else {
+            quantityByRoute[routeID] += (o.passengers || 0);
+          }
+          revenueByRoute[routeID] += (o.totalFare || o.totalAmount || 0);
+        }
+      });
+
+      // 4) Build HTML report
+      const reportFragment = document.createDocumentFragment();
+
+      const summarySection = document.createElement('div');
+      summarySection.classList.add('report-summary');
+      summarySection.innerHTML = `
+        <h3>Summary</h3>
+        <p><strong>Total Revenue:</strong> RM ${totalRevenue.toFixed(2)}</p>
+        <p><strong>Total Refunds:</strong> RM ${totalRefunds.toFixed(2)}</p>
+        <p><strong>Number of Cancellations:</strong> ${cancelCount}</p>
+      `;
+      reportFragment.appendChild(summarySection);
+
+      // 5) Table: Quantity Sold & Revenue by Route
+      const table = document.createElement('table');
+      table.classList.add('admin-table');
+      table.style.marginTop = '1rem';
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Route ID</th>
+            <th>Total Quantity Sold</th>
+            <th>Total Revenue (RM)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector('tbody');
+
+      Object.keys(quantityByRoute).forEach(routeID => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${routeID}</td>
+          <td>${quantityByRoute[routeID]}</td>
+          <td>RM ${revenueByRoute[routeID].toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      reportFragment.appendChild(table);
+
+      // 6) Attach to outputDiv
+      outputDiv.appendChild(reportFragment);
+    };
   </script>
 </body>
 </html>
