@@ -17,10 +17,10 @@ class KuchingARTApp {
         this.cart = [];
         this.ticketBookings = [];
         this.adminData = null;
-        
+
         // Initialize data service first
         this.dataService = new DataService();
-        
+
         // Initialize services with dataService
         this.userService = new UserService();
         this.orderService = new OrderService();
@@ -29,7 +29,7 @@ class KuchingARTApp {
         this.merchandiseService = new MerchandiseService(this.dataService);
         this.feedbackService = new FeedbackService();
         this.notificationService = new NotificationService();
-        
+
         this.init();
     }
 
@@ -50,33 +50,48 @@ class KuchingARTApp {
         });
 
         // Auth buttons
-        document.getElementById('loginBtn').addEventListener('click', () => this.showModal('loginModal'));
-        document.getElementById('registerBtn').addEventListener('click', () => this.showModal('registerModal'));
-        document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (loginBtn) loginBtn.addEventListener('click', () => this.showModal('loginModal'));
+        if (registerBtn) registerBtn.addEventListener('click', () => this.showModal('registerModal'));
+        if (logoutBtn) logoutBtn.addEventListener('click', () => this.logout());
 
         // Hero buttons
-        document.querySelector('[data-testid="book-ticket-btn"]').addEventListener('click', () => this.showSection('routes'));
-        document.querySelector('[data-testid="browse-merchandise-btn"]').addEventListener('click', () => this.showSection('merchandise'));
+        const bookTicketBtn = document.querySelector('[data-testid="book-ticket-btn"]');
+        const browseMerchandiseBtn = document.querySelector('[data-testid="browse-merchandise-btn"]');
+
+        if (bookTicketBtn) bookTicketBtn.addEventListener('click', () => this.showSection('routes'));
+        if (browseMerchandiseBtn) browseMerchandiseBtn.addEventListener('click', () => this.showSection('merchandise'));
 
         // Modal close buttons
         document.querySelectorAll('.close').forEach(closeBtn => {
             closeBtn.addEventListener('click', (e) => {
                 const modal = e.target.closest('.modal');
-                this.hideModal(modal.id);
+                if (modal) this.hideModal(modal.id);
             });
         });
 
         // Forms
-        document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
-        document.getElementById('registerForm').addEventListener('submit', (e) => this.handleRegister(e));
-        document.getElementById('ticketBookingForm').addEventListener('submit', (e) => this.handleTicketSearch(e));
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const ticketBookingForm = document.getElementById('ticketBookingForm');
+
+        if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        if (registerForm) registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+        if (ticketBookingForm) ticketBookingForm.addEventListener('submit', (e) => this.handleTicketSearch(e));
 
         // Merchandise filters
-        document.getElementById('categoryFilter').addEventListener('change', () => this.filterMerchandise());
-        document.getElementById('searchInput').addEventListener('input', () => this.filterMerchandise());
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchInput = document.getElementById('searchInput');
+
+        if (categoryFilter) categoryFilter.addEventListener('change', () => this.filterMerchandise());
+        if (searchInput) searchInput.addEventListener('input', () => this.filterMerchandise());
 
         // Checkout
-        document.getElementById('checkoutBtn').addEventListener('click', () => this.handleMerchandiseCheckout());
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        if (checkoutBtn) checkoutBtn.addEventListener('click', () => this.handleMerchandiseCheckout());
 
         // Feedback form
         this.setupFeedbackForm();
@@ -93,7 +108,7 @@ class KuchingARTApp {
 
         try {
             const loginResult = await this.userService.loginUser(email, password);
-            
+
             if (loginResult.success) {
                 this.currentUser = this.userService.getCurrentUser();
                 this.hideModal('loginModal');
@@ -122,7 +137,7 @@ class KuchingARTApp {
 
         try {
             const registrationResult = await this.userService.registerUser(userData);
-            
+
             if (registrationResult.success) {
                 this.showNotification('Registration successful! Please log in.', 'success');
                 this.hideModal('registerModal');
@@ -130,8 +145,8 @@ class KuchingARTApp {
                 this.showModal('loginModal');
             } else {
                 this.showNotification(
-                    registrationResult.message + 
-                    (registrationResult.errors ? ': ' + registrationResult.errors.join(', ') : ''), 
+                    registrationResult.message +
+                    (registrationResult.errors ? ': ' + registrationResult.errors.join(', ') : ''),
                     'error'
                 );
             }
@@ -179,7 +194,7 @@ class KuchingARTApp {
     showRouteResults(routes, searchData) {
         const routeResults = document.getElementById('routeResults');
         const routeList = document.getElementById('routeList');
-        
+
         routeList.innerHTML = routes.map(route => `
             <div class="route-item" style="background: white; padding: 1rem; margin: 1rem 0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -215,7 +230,7 @@ class KuchingARTApp {
             };
 
             const bookingResult = await this.ticketService.bookTicket(this.currentUser.userID, bookingData);
-            
+
             if (bookingResult.success) {
                 // Process payment
                 const paymentData = {
@@ -225,7 +240,7 @@ class KuchingARTApp {
                 };
 
                 const paymentResult = await this.paymentService.processPayment(paymentData);
-                
+
                 if (paymentResult.success) {
                     this.ticketBookings.push(bookingResult.booking);
                     this.showNotification(`Ticket booked successfully! Total: RM ${bookingResult.totalAmount.toFixed(2)}`, 'success');
@@ -251,7 +266,7 @@ class KuchingARTApp {
 
         try {
             const cancellationResult = await this.ticketService.cancelTicket(ticketID, this.currentUser.userID);
-            
+
             if (cancellationResult.success) {
                 // Process refund
                 const refundResult = await this.paymentService.processRefund({
@@ -284,7 +299,7 @@ class KuchingARTApp {
         adminBtn.textContent = 'Admin Panel';
         adminBtn.style.display = 'none';
         adminBtn.addEventListener('click', () => this.showAdminPanel());
-        
+
         document.querySelector('.nav').appendChild(adminBtn);
     }
 
@@ -380,7 +395,7 @@ class KuchingARTApp {
         feedbackBtn.className = 'btn btn-outline';
         feedbackBtn.textContent = 'Give Feedback';
         feedbackBtn.addEventListener('click', () => this.showFeedbackModal());
-        
+
         // Add to footer or create floating button
         document.body.appendChild(feedbackBtn);
         feedbackBtn.style.position = 'fixed';
@@ -427,23 +442,23 @@ class KuchingARTApp {
                 </form>
             </div>
         `;
-        
+
         document.body.appendChild(feedbackModal);
-        
+
         // Setup modal close functionality
         feedbackModal.querySelector('.close').addEventListener('click', () => {
             feedbackModal.remove();
         });
-        
+
         // Setup form submission
         feedbackModal.querySelector('#feedbackForm').addEventListener('submit', (e) => this.handleFeedbackSubmission(e, feedbackModal));
-        
+
         feedbackModal.classList.add('active');
     }
 
     async handleFeedbackSubmission(e, modal) {
         e.preventDefault();
-        
+
         if (!this.currentUser) {
             this.showNotification('Please login to submit feedback', 'error');
             modal.remove();
@@ -460,7 +475,7 @@ class KuchingARTApp {
 
         try {
             const result = await this.feedbackService.submitFeedback(feedbackData);
-            
+
             if (result.success) {
                 this.showNotification('Thank you for your feedback!', 'success');
                 modal.remove();
@@ -526,7 +541,7 @@ class KuchingARTApp {
     displayMerchandise(items) {
         const grid = document.getElementById('merchandiseGrid');
         if (!grid || !Array.isArray(items)) return;
-        
+
         grid.innerHTML = items.map(item => `
             <div class="merchandise-item" data-testid="merchandise-${item.merchandiseID}">
                 <img src="${item.imageURL}" alt="${item.name}">
@@ -545,7 +560,7 @@ class KuchingARTApp {
     async filterMerchandise() {
         const category = document.getElementById('categoryFilter').value;
         const search = document.getElementById('searchInput').value;
-        
+
         try {
             const filteredData = await this.merchandiseService.searchMerchandise(search, { category });
             this.displayMerchandise(filteredData);
@@ -578,7 +593,7 @@ class KuchingARTApp {
             this.showNotification('Your cart is empty', 'error');
             return;
         }
-        
+
         if (!this.currentUser) {
             this.showNotification('Please login to checkout', 'error');
             this.showModal('loginModal');
@@ -597,7 +612,7 @@ class KuchingARTApp {
             };
 
             const orderResult = await this.orderService.createOrder(orderData);
-            
+
             if (orderResult.success) {
                 // Process payment
                 const paymentData = {
@@ -607,7 +622,7 @@ class KuchingARTApp {
                 };
 
                 const paymentResult = await this.paymentService.processPayment(paymentData);
-                
+
                 if (paymentResult.success) {
                     this.cart = [];
                     this.updateCart();
@@ -663,14 +678,14 @@ class KuchingARTApp {
         const cartCount = document.getElementById('cartCount');
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
-        
+
         if (cartCount && cartItems && cartTotal) {
             const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
             const totalPrice = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
             cartCount.textContent = totalItems;
             cartTotal.textContent = totalPrice.toFixed(2);
-            
+
             cartItems.innerHTML = this.cart.map(item => `
                 <div class="cart-item">
                     <span>${item.name} x${item.quantity}</span>
@@ -686,10 +701,10 @@ class KuchingARTApp {
                 // Load user's orders and tickets
                 const orders = await this.orderService.getUserOrders(this.currentUser.userID);
                 const tickets = await this.ticketService.getUserTickets(this.currentUser.userID);
-                
+
                 this.userOrders = orders;
                 this.ticketBookings = tickets;
-                
+
                 // Update profile display
                 this.loadProfile();
             } catch (error) {
@@ -703,7 +718,7 @@ class KuchingARTApp {
             const profileName = document.getElementById('profileName');
             const profileEmail = document.getElementById('profileEmail');
             const loyaltyPoints = document.getElementById('loyaltyPoints');
-            
+
             if (profileName) profileName.textContent = this.currentUser.userName;
             if (profileEmail) profileEmail.textContent = this.currentUser.email;
             if (loyaltyPoints) loyaltyPoints.textContent = this.currentUser.loyaltyPoints || 0;
@@ -722,7 +737,7 @@ class KuchingARTApp {
             if (registerBtn) registerBtn.classList.add('hidden');
             if (userProfile) userProfile.classList.remove('hidden');
             if (userName) userName.textContent = this.currentUser.userName;
-            
+
             // Show admin button if user is admin
             if (adminBtn && this.currentUser.isAdmin) {
                 adminBtn.style.display = 'block';
@@ -738,17 +753,17 @@ class KuchingARTApp {
     showNotification(message, type = 'info') {
         const notifications = document.getElementById('notifications');
         if (!notifications) return;
-        
+
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
-        
+
         const uniqueId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         notification.setAttribute('data-testid', uniqueId);
         notification.setAttribute('data-notification', 'true');
-        
+
         notifications.appendChild(notification);
-        
+
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.remove();
@@ -760,7 +775,7 @@ class KuchingARTApp {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new KuchingARTApp();
-    
+
     // Set minimum date for ticket booking to today
     const dateInput = document.getElementById('departureDate');
     if (dateInput) {
