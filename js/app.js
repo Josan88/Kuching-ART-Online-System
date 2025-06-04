@@ -27,7 +27,7 @@ class KuchingARTApp {
         this.ticketService = new TicketService();
         this.paymentService = new PaymentService();
         this.merchandiseService = new MerchandiseService(this.dataService);
-        this.feedbackService = new FeedbackService();
+        this.feedbackService = new FeedbackService(this.dataService);
         this.notificationService = new NotificationService();
 
         this.init();
@@ -434,7 +434,7 @@ class KuchingARTApp {
         feedbackModal.className = 'modal';
         feedbackModal.innerHTML = `
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close">×</span>
                 <h2>Submit Feedback</h2>
                 <form id="feedbackForm">
                     <div class="form-group">
@@ -459,8 +459,12 @@ class KuchingARTApp {
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="feedbackSubject">Subject:</label>
+                        <input type="text" id="feedbackSubject" placeholder="Enter a brief subject" required minlength="5">
+                    </div>
+                    <div class="form-group">
                         <label for="feedbackComment">Comments:</label>
-                        <textarea id="feedbackComment" rows="4" placeholder="Please share your experience..." required></textarea>
+                        <textarea id="feedbackComment" rows="4" placeholder="Please share your experience..." required minlength="10"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
                 </form>
@@ -491,20 +495,27 @@ class KuchingARTApp {
         }
 
         const feedbackData = {
-            userID: this.currentUser.userID,
-            rating: parseInt(document.getElementById('feedbackRating').value),
-            category: document.getElementById('feedbackCategory').value,
-            comment: document.getElementById('feedbackComment').value
+            userId: this.currentUser.userID,
+            type: document.getElementById('feedbackCategory').value,
+            subject: document.getElementById('feedbackSubject').value,
+            message: document.getElementById('feedbackComment').value,
+            rating: parseInt(document.getElementById('feedbackRating').value)
         };
 
         try {
+            if (!this.feedbackService) {
+                console.error("FeedbackService not initialized!");
+                this.showNotification('Feedback system error. Please try again later.', 'error');
+                return;
+            }
             const result = await this.feedbackService.submitFeedback(feedbackData);
 
             if (result.success) {
                 this.showNotification('Thank you for your feedback!', 'success');
                 modal.remove();
             } else {
-                this.showNotification('Failed to submit feedback: ' + result.message, 'error');
+                const errorMessage = result.errors ? result.errors.join(', ') : result.message;
+                this.showNotification('Failed to submit feedback: ' + errorMessage, 'error');
             }
         } catch (error) {
             console.error('Feedback submission error:', error);
@@ -709,7 +720,7 @@ class KuchingARTApp {
                 if (paymentResult.success) {
                     this.cart = [];
                     this.updateCart();
-                    this.showNotification(`Order placed successfully! Total: RM ${orderResult.totalAmount.toFixed(2)}`, 'success');
+                    this.showNotification(`Order placed successfully!`, 'success');
                     await this.loadUserData(); // Refresh user data
                 } else {
                     this.showNotification('Payment failed: ' + paymentResult.message, 'error');
