@@ -87,10 +87,9 @@ const sampleMerchandise = [
         stockQuantity: 30,
         imageURL: '../../images/art-mug.jpg',
         isActive: true
-    },
-    {
+    },    {
         merchandiseID: 'merch_3',
-        name: 'Kuching Model Train',
+        name: 'Kuching ART Model Train',
         description: 'Detailed model train replica of the Kuching ART system',
         price: 80.00,
         category: 'souvenirs',

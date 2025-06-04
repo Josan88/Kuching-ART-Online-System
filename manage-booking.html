@@ -21,7 +21,6 @@
                     <li><a href="index.html#routes">Routes</a></li>
                     <li><a href="index.html#fares">Fares</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
-                    <li><a href="feedback.html">Feedback</a></li>
                     <li><a href="merchandise.html">Merchandise</a></li>
                     <li><a href="login.html" class="login-btn">Login / Register</a></li>
                 </ul>
@@ -55,20 +54,20 @@
                         <div class="booking-item">
                             <div class="booking-header">
                                 <div>
-                                    <h4>Booking Reference: <span id="result-booking-reference">KCH12345678</span></h4>
-                                    <p>Booked on: <span id="result-booking-date">18 May 2025</span></p>
+                                    <h4>Booking Reference: <span id="booking-ref">KAR-20250120-001</span></h4>
+                                    <p>Booked on: <span id="booking-date">20 Jan 2025</span></p>
                                 </div>
                                 <div class="booking-status">
-                                    <span class="status-badge status-confirmed" id="result-booking-status">Confirmed</span>
+                                    <span class="status-badge status-confirmed">Confirmed</span>
                                 </div>
                             </div>
                             <div class="booking-details">
                                 <div class="journey-details">
                                     <div class="departure">
                                         <p class="label">Departure</p>
-                                        <p class="station" id="result-departure-station">Kuching Sentral</p>
-                                        <p class="time" id="result-departure-time">09:30 AM</p>
-                                        <p class="date" id="result-departure-date">20 May 2025</p>
+                                        <p class="station">Kuching Sentral</p>
+                                        <p class="time">09:30 AM</p>
+                                        <p class="date">25 Jan 2025</p>
                                     </div>
                                     <div class="journey-line">
                                         <i class="fas fa-circle"></i>
@@ -77,21 +76,21 @@
                                     </div>
                                     <div class="arrival">
                                         <p class="label">Arrival</p>
-                                        <p class="station" id="result-arrival-station">Petra Jaya</p>
-                                        <p class="time" id="result-arrival-time">10:15 AM</p>
-                                        <p class="date" id="result-arrival-date">20 May 2025</p>
+                                        <p class="station">Petra Jaya</p>
+                                        <p class="time">10:15 AM</p>
+                                        <p class="date">25 Jan 2025</p>
                                     </div>
                                 </div>
                                 <div class="passenger-details">
                                     <h5>Passengers</h5>
-                                    <ul id="result-passengers">
+                                    <ul>
                                         <li>John Doe (Adult)</li>
                                         <li>Jane Doe (Adult)</li>
                                     </ul>
                                 </div>
                                 <div class="price-details">
-                                    <h5>Price</h5>
-                                    <p id="result-price">RM 7.00</p>
+                                    <h5>Total Price</h5>
+                                    <p>RM 6.00</p>
                                 </div>
                             </div>
                             <div class="booking-actions">
@@ -122,40 +121,20 @@
                             <h4>Select New Date and Time</h4>
                             <form id="rescheduleForm">
                                 <div class="form-group">
-                                    <label for="newDate">New Date</label>
-                                    <input type="date" id="newDate" name="newDate" required>
+                                    <label for="new-date">New Date:</label>
+                                    <input type="date" id="new-date" name="newDate" required>
                                 </div>
                                 <div class="available-trips" id="reschedule-available-trips">
                                     <!-- Available trips will be loaded here -->
-                                    <div class="schedule-item">
-                                        <input type="radio" name="newTrip" id="trip1" value="trip1">
-                                        <label for="trip1" class="schedule-label">
-                                            <div class="schedule-time">09:30 AM</div>
-                                            <div class="schedule-price">RM 3.50</div>
-                                        </label>
-                                    </div>
-                                    <div class="schedule-item">
-                                        <input type="radio" name="newTrip" id="trip2" value="trip2">
-                                        <label for="trip2" class="schedule-label">
-                                            <div class="schedule-time">10:00 AM</div>
-                                            <div class="schedule-price">RM 3.50</div>
-                                        </label>
-                                    </div>
-                                    <div class="schedule-item">
-                                        <input type="radio" name="newTrip" id="trip3" value="trip3">
-                                        <label for="trip3" class="schedule-label">
-                                            <div class="schedule-time">10:30 AM</div>
-                                            <div class="schedule-price">RM 3.50</div>
-                                        </label>
-                                    </div>
                                 </div>
                                 
                                 <div class="reschedule-fee">
-                                    <p><strong>Reschedule Fee:</strong> <span id="reschedule-fee">RM 2.00</span></p>
+                                    <p><strong>Reschedule Fee:</strong> RM 2.00</p>
+                                    <p><strong>New Total:</strong> RM 8.00</p>
                                 </div>
                                 
                                 <div class="form-actions">
-                                    <button type="button" class="btn secondary-btn" id="cancel-reschedule">Cancel</button>
+                                    <button type="button" class="btn secondary-btn">Cancel</button>
                                     <button type="submit" class="btn primary-btn">Confirm Reschedule</button>
                                 </div>
                             </form>
@@ -179,40 +158,33 @@
                             <div class="cancellation-policy">
                                 <h4>Cancellation Policy</h4>
                                 <ul>
-                                    <li>Cancellation 48 hours before departure: 100% refund</li>
+                                    <li>Cancellation ≥ 48 hours before departure: 100% refund</li>
                                     <li>Cancellation 24-48 hours before departure: 50% refund</li>
-                                    <li>Cancellation less than 24 hours before departure: No refund</li>
+                                    <li>Cancellation < 24 hours before departure: No refund</li>
                                 </ul>
                             </div>
                             
                             <div class="current-booking">
-                                <p><strong>Booking Reference:</strong> <span id="cancel-booking-reference">KCH12345678</span></p>
-                                <p><strong>From:</strong> <span id="cancel-current-from">Kuching Sentral</span></p>
-                                <p><strong>To:</strong> <span id="cancel-current-to">Petra Jaya</span></p>
-                                <p><strong>Date:</strong> <span id="cancel-current-date">20 May 2025</span></p>
-                                <p><strong>Time:</strong> <span id="cancel-current-time">09:30 AM</span></p>
-                                <p><strong>Refund Amount:</strong> <span id="refund-amount">RM 7.00</span></p>
+                                <p><strong>From:</strong> Kuching Sentral</p>
+                                <p><strong>To:</strong> Petra Jaya</p>
+                                <p><strong>Date:</strong> 25 Jan 2025</p>
+                                <p><strong>Time:</strong> 09:30 AM</p>
+                                <p><strong>Original Price:</strong> RM 6.00</p>
                             </div>
                             
                             <div class="refund-options">
                                 <h4>Refund Method</h4>
-                                <form id="refundForm">
+                                <form>
                                     <div class="form-group">
-                                        <input type="radio" id="original-payment" name="refundMethod" value="original" checked>
-                                        <label for="original-payment">Refund to original payment method</label>
+                                        <input type="radio" id="refund-original" name="refundMethod" value="original" checked>
+                                        <label for="refund-original">Refund to original payment method</label>
                                     </div>
                                     <div class="form-group">
-                                        <input type="radio" id="credit" name="refundMethod" value="credit">
-                                        <label for="credit">Credit for future bookings</label>
+                                        <input type="radio" id="refund-credit" name="refundMethod" value="credit">
+                                        <label for="refund-credit">Credit for future bookings</label>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="cancellationReason">Reason for Cancellation (Optional)</label>
-                                        <textarea id="cancellationReason" name="cancellationReason" rows="3"></textarea>
-                                    </div>
-                                    
                                     <div class="form-actions">
-                                        <button type="button" class="btn secondary-btn" id="back-from-cancel">Back</button>
+                                        <button type="button" class="btn secondary-btn">Keep Booking</button>
                                         <button type="submit" class="btn danger-btn">Confirm Cancellation</button>
                                     </div>
                                 </form>
@@ -277,7 +249,7 @@
         </div>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script type="module" src="js/app.js"></script>
     <script src="js/manage-booking.js"></script>
 </body>
 </html>

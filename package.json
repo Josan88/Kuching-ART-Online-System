@@ -4,19 +4,16 @@
   "description": "End-to-end tests for Kuching ART Online System",
   "main": "js/app.js",
   "scripts": {
+    "start": "npx http-server . -p 3000 -c-1",
     "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug",
     "test:ui": "playwright test --ui",
-    "test:report": "playwright show-report",
-    "serve": "npx http-server -p 8080 -c-1",
-    "test:ci": "npm run serve & sleep 3 && npm test && kill %1",
-    "demo": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\" --headed",
-    "demo:quick": "playwright test tests/integrated-demo.test.js --grep=\"Page loads correctly\" --project=\"Microsoft Edge\" --headed",
-    "demo:complete": "playwright test tests/integrated-demo.test.js --grep=\"six core scenarios\" --project=\"Microsoft Edge\" --headed",
-    "demo:scenarios": "playwright test tests/integrated-demo.test.js --grep=\"Scenario [1-6]\" --project=\"Microsoft Edge\" --headed",
-    "demo:headless": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\"",
-    "demo:report": "playwright test tests/integrated-demo.test.js --project=\"Microsoft Edge\" && playwright show-report"
+    "test:headed": "playwright test --headed",
+    "test:scenarios": "playwright test tests/integrated-demo.test.js",
+    "test:auth": "playwright test tests/authentication.test.js",
+    "test:booking": "playwright test tests/ticket-booking.test.js",
+    "test:merchandise": "playwright test tests/merchandise.test.js",
+    "serve": "http-server . -p 3000 -c-1",
+    "test:serve": "http-server . -p 3000 -c-1 & sleep 3 && npm run test && kill %1"
   },
   "keywords": [
     "e2e",

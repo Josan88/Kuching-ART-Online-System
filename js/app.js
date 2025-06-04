@@ -17,19 +17,19 @@ class KuchingARTApp {
         this.cart = [];
         this.ticketBookings = [];
         this.adminData = null;
-        
+
         // Initialize data service first
         this.dataService = new DataService();
-        
+
         // Initialize services with dataService
         this.userService = new UserService();
         this.orderService = new OrderService();
         this.ticketService = new TicketService();
         this.paymentService = new PaymentService();
         this.merchandiseService = new MerchandiseService(this.dataService);
-        this.feedbackService = new FeedbackService();
+        this.feedbackService = new FeedbackService(this.dataService);
         this.notificationService = new NotificationService();
-        
+
         this.init();
     }
 
@@ -50,33 +50,67 @@ class KuchingARTApp {
         });
 
         // Auth buttons
-        document.getElementById('loginBtn').addEventListener('click', () => this.showModal('loginModal'));
-        document.getElementById('registerBtn').addEventListener('click', () => this.showModal('registerModal'));
-        document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (loginBtn) loginBtn.addEventListener('click', () => this.showModal('loginModal'));
+        if (registerBtn) registerBtn.addEventListener('click', () => this.showModal('registerModal'));
+        if (logoutBtn) logoutBtn.addEventListener('click', () => this.logout());
 
         // Hero buttons
-        document.querySelector('[data-testid="book-ticket-btn"]').addEventListener('click', () => this.showSection('routes'));
-        document.querySelector('[data-testid="browse-merchandise-btn"]').addEventListener('click', () => this.showSection('merchandise'));
+        const bookTicketBtn = document.querySelector('[data-testid="book-ticket-btn"]');
+        const browseMerchandiseBtn = document.querySelector('[data-testid="browse-merchandise-btn"]');
+
+        if (bookTicketBtn) bookTicketBtn.addEventListener('click', () => this.showSection('routes'));
+        if (browseMerchandiseBtn) browseMerchandiseBtn.addEventListener('click', () => this.showSection('merchandise'));
 
         // Modal close buttons
         document.querySelectorAll('.close').forEach(closeBtn => {
             closeBtn.addEventListener('click', (e) => {
                 const modal = e.target.closest('.modal');
-                this.hideModal(modal.id);
+                if (modal) this.hideModal(modal.id);
             });
         });
 
         // Forms
-        document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
-        document.getElementById('registerForm').addEventListener('submit', (e) => this.handleRegister(e));
-        document.getElementById('ticketBookingForm').addEventListener('submit', (e) => this.handleTicketSearch(e));
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const ticketBookingForm = document.getElementById('ticketBookingForm');
 
-        // Merchandise filters
-        document.getElementById('categoryFilter').addEventListener('change', () => this.filterMerchandise());
-        document.getElementById('searchInput').addEventListener('input', () => this.filterMerchandise());
+        if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        if (registerForm) registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+        if (ticketBookingForm) ticketBookingForm.addEventListener('submit', (e) => this.handleTicketSearch(e));        // Merchandise filters
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchInput = document.getElementById('searchInput');
+
+        if (categoryFilter) {
+            console.log('Setting up category filter event listener');
+            // Remove existing listeners to avoid duplicates
+            categoryFilter.removeEventListener('change', this.filterMerchandise.bind(this));
+            categoryFilter.addEventListener('change', () => {
+                console.log('Category filter changed to:', categoryFilter.value);
+                this.filterMerchandise();
+            });
+        } else {
+            console.log('Category filter element not found');
+        }
+
+        if (searchInput) {
+            console.log('Setting up search input event listener');
+            // Remove existing listeners to avoid duplicates
+            searchInput.removeEventListener('input', this.filterMerchandise.bind(this));
+            searchInput.addEventListener('input', () => {
+                console.log('Search input changed to:', searchInput.value);
+                this.filterMerchandise();
+            });
+        } else {
+            console.log('Search input element not found');
+        }
 
         // Checkout
-        document.getElementById('checkoutBtn').addEventListener('click', () => this.handleMerchandiseCheckout());
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        if (checkoutBtn) checkoutBtn.addEventListener('click', () => this.handleMerchandiseCheckout());
 
         // Feedback form
         this.setupFeedbackForm();
@@ -93,7 +127,7 @@ class KuchingARTApp {
 
         try {
             const loginResult = await this.userService.loginUser(email, password);
-            
+
             if (loginResult.success) {
                 this.currentUser = this.userService.getCurrentUser();
                 this.hideModal('loginModal');
@@ -122,7 +156,7 @@ class KuchingARTApp {
 
         try {
             const registrationResult = await this.userService.registerUser(userData);
-            
+
             if (registrationResult.success) {
                 this.showNotification('Registration successful! Please log in.', 'success');
                 this.hideModal('registerModal');
@@ -130,8 +164,8 @@ class KuchingARTApp {
                 this.showModal('loginModal');
             } else {
                 this.showNotification(
-                    registrationResult.message + 
-                    (registrationResult.errors ? ': ' + registrationResult.errors.join(', ') : ''), 
+                    registrationResult.message +
+                    (registrationResult.errors ? ': ' + registrationResult.errors.join(', ') : ''),
                     'error'
                 );
             }
@@ -179,7 +213,7 @@ class KuchingARTApp {
     showRouteResults(routes, searchData) {
         const routeResults = document.getElementById('routeResults');
         const routeList = document.getElementById('routeList');
-        
+
         routeList.innerHTML = routes.map(route => `
             <div class="route-item" style="background: white; padding: 1rem; margin: 1rem 0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -215,7 +249,7 @@ class KuchingARTApp {
             };
 
             const bookingResult = await this.ticketService.bookTicket(this.currentUser.userID, bookingData);
-            
+
             if (bookingResult.success) {
                 // Process payment
                 const paymentData = {
@@ -225,7 +259,7 @@ class KuchingARTApp {
                 };
 
                 const paymentResult = await this.paymentService.processPayment(paymentData);
-                
+
                 if (paymentResult.success) {
                     this.ticketBookings.push(bookingResult.booking);
                     this.showNotification(`Ticket booked successfully! Total: RM ${bookingResult.totalAmount.toFixed(2)}`, 'success');
@@ -251,7 +285,7 @@ class KuchingARTApp {
 
         try {
             const cancellationResult = await this.ticketService.cancelTicket(ticketID, this.currentUser.userID);
-            
+
             if (cancellationResult.success) {
                 // Process refund
                 const refundResult = await this.paymentService.processRefund({
@@ -284,8 +318,13 @@ class KuchingARTApp {
         adminBtn.textContent = 'Admin Panel';
         adminBtn.style.display = 'none';
         adminBtn.addEventListener('click', () => this.showAdminPanel());
-        
-        document.querySelector('.nav').appendChild(adminBtn);
+
+        const nav = document.querySelector('.nav');
+        if (nav) {
+            nav.appendChild(adminBtn);
+        } else {
+            console.warn('Admin button not added: .nav element not found');
+        }
     }
 
     async showAdminPanel() {
@@ -380,7 +419,7 @@ class KuchingARTApp {
         feedbackBtn.className = 'btn btn-outline';
         feedbackBtn.textContent = 'Give Feedback';
         feedbackBtn.addEventListener('click', () => this.showFeedbackModal());
-        
+
         // Add to footer or create floating button
         document.body.appendChild(feedbackBtn);
         feedbackBtn.style.position = 'fixed';
@@ -395,7 +434,7 @@ class KuchingARTApp {
         feedbackModal.className = 'modal';
         feedbackModal.innerHTML = `
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close">×</span>
                 <h2>Submit Feedback</h2>
                 <form id="feedbackForm">
                     <div class="form-group">
@@ -420,30 +459,34 @@ class KuchingARTApp {
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="feedbackSubject">Subject:</label>
+                        <input type="text" id="feedbackSubject" placeholder="Enter a brief subject" required minlength="5">
+                    </div>
+                    <div class="form-group">
                         <label for="feedbackComment">Comments:</label>
-                        <textarea id="feedbackComment" rows="4" placeholder="Please share your experience..." required></textarea>
+                        <textarea id="feedbackComment" rows="4" placeholder="Please share your experience..." required minlength="10"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
                 </form>
             </div>
         `;
-        
+
         document.body.appendChild(feedbackModal);
-        
+
         // Setup modal close functionality
         feedbackModal.querySelector('.close').addEventListener('click', () => {
             feedbackModal.remove();
         });
-        
+
         // Setup form submission
         feedbackModal.querySelector('#feedbackForm').addEventListener('submit', (e) => this.handleFeedbackSubmission(e, feedbackModal));
-        
+
         feedbackModal.classList.add('active');
     }
 
     async handleFeedbackSubmission(e, modal) {
         e.preventDefault();
-        
+
         if (!this.currentUser) {
             this.showNotification('Please login to submit feedback', 'error');
             modal.remove();
@@ -452,20 +495,27 @@ class KuchingARTApp {
         }
 
         const feedbackData = {
-            userID: this.currentUser.userID,
-            rating: parseInt(document.getElementById('feedbackRating').value),
-            category: document.getElementById('feedbackCategory').value,
-            comment: document.getElementById('feedbackComment').value
+            userId: this.currentUser.userID,
+            type: document.getElementById('feedbackCategory').value,
+            subject: document.getElementById('feedbackSubject').value,
+            message: document.getElementById('feedbackComment').value,
+            rating: parseInt(document.getElementById('feedbackRating').value)
         };
 
         try {
+            if (!this.feedbackService) {
+                console.error("FeedbackService not initialized!");
+                this.showNotification('Feedback system error. Please try again later.', 'error');
+                return;
+            }
             const result = await this.feedbackService.submitFeedback(feedbackData);
-            
+
             if (result.success) {
                 this.showNotification('Thank you for your feedback!', 'success');
                 modal.remove();
             } else {
-                this.showNotification('Failed to submit feedback: ' + result.message, 'error');
+                const errorMessage = result.errors ? result.errors.join(', ') : result.message;
+                this.showNotification('Failed to submit feedback: ' + errorMessage, 'error');
             }
         } catch (error) {
             console.error('Feedback submission error:', error);
@@ -476,46 +526,50 @@ class KuchingARTApp {
     // SCENARIO 6: Merchandise Purchase
     async loadInitialData() {
         try {
-            // Load merchandise data from service
             const merchandiseData = await this.merchandiseService.getAllMerchandise();
-            // Extract the merchandise array from the response object
-            const merchandise = merchandiseData.merchandise || [];
-            this.displayMerchandise(merchandise);
+            let merchandise = (merchandiseData && merchandiseData.merchandise) ? merchandiseData.merchandise : [];
+
+            if (!merchandise || merchandise.length === 0) {
+                console.log("No merchandise found from service or storage. Loading sample merchandise.");
+                this.loadSampleMerchandise();
+            } else {
+                this.displayMerchandise(merchandise);
+            }
         } catch (error) {
-            console.error('Error loading initial data:', error);
-            // Fallback to sample data
+            console.error('Error loading initial data from service. Falling back to sample merchandise.', error);
             this.loadSampleMerchandise();
         }
-    }
-
-    loadSampleMerchandise() {
+    } loadSampleMerchandise() {
         const sampleData = [
             {
                 merchandiseID: '1',
                 name: 'Kuching ART T-Shirt',
-                description: 'Official Kuching ART branded t-shirt',
+                description: 'Official Kuching ART branded t-shirt made from premium cotton',
                 price: 25.00,
                 category: 'clothing',
                 stockQuantity: 50,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+VC1TaGlydDwvdGV4dD48L3N2Zz4='
+                imageURL: './images/art-tshirt.jpg',
+                isActive: true
             },
             {
                 merchandiseID: '2',
                 name: 'ART Coffee Mug',
-                description: 'Ceramic coffee mug with ART logo',
+                description: 'Ceramic coffee mug with ART logo, perfect for your morning coffee',
                 price: 12.00,
                 category: 'accessories',
                 stockQuantity: 30,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+TXVnPC90ZXh0Pjwvc3ZnPg=='
+                imageURL: './images/art-mug.jpg',
+                isActive: true
             },
             {
                 merchandiseID: '3',
-                name: 'Kuching Keychain',
-                description: 'Souvenir keychain featuring Kuching landmarks',
+                name: 'Kuching ART Model Train',
+                description: 'Souvenir model train featuring Kuching landmarks',
                 price: 8.00,
                 category: 'souvenirs',
                 stockQuantity: 100,
-                imageURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCI+S2V5Y2hhaW48L3RleHQ+PC9zdmc+'
+                imageURL: './images/art-model-train.jpg',
+                isActive: true
             }
         ];
         // Initialize sample data in storage
@@ -526,7 +580,7 @@ class KuchingARTApp {
     displayMerchandise(items) {
         const grid = document.getElementById('merchandiseGrid');
         if (!grid || !Array.isArray(items)) return;
-        
+
         grid.innerHTML = items.map(item => `
             <div class="merchandise-item" data-testid="merchandise-${item.merchandiseID}">
                 <img src="${item.imageURL}" alt="${item.name}">
@@ -540,15 +594,70 @@ class KuchingARTApp {
                 </div>
             </div>
         `).join('');
-    }
+    } async filterMerchandise() {
+        const category = document.getElementById('categoryFilter')?.value;
+        const search = document.getElementById('searchInput')?.value;
 
-    async filterMerchandise() {
-        const category = document.getElementById('categoryFilter').value;
-        const search = document.getElementById('searchInput').value;
-        
+        console.log('filterMerchandise called with category:', category, 'search:', search);
+
         try {
-            const filteredData = await this.merchandiseService.searchMerchandise(search, { category });
-            this.displayMerchandise(filteredData);
+            // Get all merchandise items from DOM
+            const allItems = document.querySelectorAll('.merchandise-item');
+            console.log('Found DOM items:', allItems.length);
+
+            if (!category && !search) {
+                // Show all items
+                allItems.forEach(item => {
+                    item.style.display = '';
+                });
+                return;
+            }            // Get all merchandise data for filtering
+            const allMerchandise = await this.merchandiseService.getAllMerchandise({});
+            const merchandiseData = allMerchandise.merchandise || allMerchandise;
+            console.log('All merchandise data:', merchandiseData);
+
+            // Filter the data based on category and search
+            const filteredData = merchandiseData.filter(item => {
+                let matches = true;
+
+                // Category filter
+                if (category && item.category !== category) {
+                    matches = false;
+                }
+
+                // Search filter
+                if (search) {
+                    const searchTerm = search.toLowerCase();
+                    const textMatch =
+                        item.name.toLowerCase().includes(searchTerm) ||
+                        item.description.toLowerCase().includes(searchTerm) ||
+                        item.category.toLowerCase().includes(searchTerm);
+                    if (!textMatch) {
+                        matches = false;
+                    }
+                }
+
+                return matches;
+            });
+
+            console.log('Filtered data:', filteredData);
+            const filteredIds = new Set(filteredData.map(item => item.merchandiseID));
+            console.log('Filtered IDs:', filteredIds);
+
+            // Show/hide items based on filter results
+            allItems.forEach(item => {
+                const testId = item.getAttribute('data-testid');
+                if (testId) {
+                    const itemId = testId.replace('merchandise-', '');
+                    if (filteredIds.has(itemId)) {
+                        item.style.display = '';
+                        console.log('Showing item:', itemId);
+                    } else {
+                        item.style.display = 'none';
+                        console.log('Hiding item:', itemId);
+                    }
+                }
+            });
         } catch (error) {
             console.error('Error filtering merchandise:', error);
         }
@@ -573,12 +682,31 @@ class KuchingARTApp {
         }
     }
 
+    removeFromCart(merchandiseID) {
+        const itemIndex = this.cart.findIndex(cartItem => cartItem.merchandiseID === merchandiseID);
+
+        if (itemIndex > -1) {
+            const item = this.cart[itemIndex];
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+                this.showNotification(`${item.name} quantity updated in cart.`, 'info');
+            } else {
+                this.cart.splice(itemIndex, 1);
+                this.showNotification(`${item.name} removed from cart.`, 'info');
+            }
+            this.updateCart();
+        } else {
+            this.showNotification('Item not found in cart.', 'error');
+            console.error(`Attempted to remove item with ID ${merchandiseID} not found in cart.`);
+        }
+    }
+
     async handleMerchandiseCheckout() {
         if (this.cart.length === 0) {
             this.showNotification('Your cart is empty', 'error');
             return;
         }
-        
+
         if (!this.currentUser) {
             this.showNotification('Please login to checkout', 'error');
             this.showModal('loginModal');
@@ -597,7 +725,7 @@ class KuchingARTApp {
             };
 
             const orderResult = await this.orderService.createOrder(orderData);
-            
+
             if (orderResult.success) {
                 // Process payment
                 const paymentData = {
@@ -607,11 +735,11 @@ class KuchingARTApp {
                 };
 
                 const paymentResult = await this.paymentService.processPayment(paymentData);
-                
+
                 if (paymentResult.success) {
                     this.cart = [];
                     this.updateCart();
-                    this.showNotification(`Order placed successfully! Total: RM ${orderResult.totalAmount.toFixed(2)}`, 'success');
+                    this.showNotification(`Order placed successfully!`, 'success');
                     await this.loadUserData(); // Refresh user data
                 } else {
                     this.showNotification('Payment failed: ' + paymentResult.message, 'error');
@@ -663,20 +791,36 @@ class KuchingARTApp {
         const cartCount = document.getElementById('cartCount');
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
-        
+
         if (cartCount && cartItems && cartTotal) {
             const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
             const totalPrice = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
             cartCount.textContent = totalItems;
             cartTotal.textContent = totalPrice.toFixed(2);
-            
-            cartItems.innerHTML = this.cart.map(item => `
-                <div class="cart-item">
-                    <span>${item.name} x${item.quantity}</span>
-                    <span>RM ${(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-            `).join('');
+
+            if (this.cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                cartItems.innerHTML = this.cart.map(item => `
+                    <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                        <div style="flex-grow: 1;">
+                            ${item.name} (x${item.quantity})
+                            <br>
+                            <small>RM ${item.price.toFixed(2)} each</small>
+                        </div>
+                        <span style="font-weight: bold; margin-right: 10px;">RM ${(item.price * item.quantity).toFixed(2)}</span>
+                        <button 
+                            class="btn btn-danger btn-sm" 
+                            onclick="app.removeFromCart('${item.merchandiseID}')" 
+                            data-testid="remove-cart-item-${item.merchandiseID}"
+                            style="padding: 2px 5px; font-size: 0.8em;"
+                            title="Remove ${item.name}">
+                            Remove
+                        </button>
+                    </div>
+                `).join('');
+            }
         }
     }
 
@@ -686,10 +830,10 @@ class KuchingARTApp {
                 // Load user's orders and tickets
                 const orders = await this.orderService.getUserOrders(this.currentUser.userID);
                 const tickets = await this.ticketService.getUserTickets(this.currentUser.userID);
-                
+
                 this.userOrders = orders;
                 this.ticketBookings = tickets;
-                
+
                 // Update profile display
                 this.loadProfile();
             } catch (error) {
@@ -703,7 +847,7 @@ class KuchingARTApp {
             const profileName = document.getElementById('profileName');
             const profileEmail = document.getElementById('profileEmail');
             const loyaltyPoints = document.getElementById('loyaltyPoints');
-            
+
             if (profileName) profileName.textContent = this.currentUser.userName;
             if (profileEmail) profileEmail.textContent = this.currentUser.email;
             if (loyaltyPoints) loyaltyPoints.textContent = this.currentUser.loyaltyPoints || 0;
@@ -722,7 +866,7 @@ class KuchingARTApp {
             if (registerBtn) registerBtn.classList.add('hidden');
             if (userProfile) userProfile.classList.remove('hidden');
             if (userName) userName.textContent = this.currentUser.userName;
-            
+
             // Show admin button if user is admin
             if (adminBtn && this.currentUser.isAdmin) {
                 adminBtn.style.display = 'block';
@@ -733,39 +877,56 @@ class KuchingARTApp {
             if (userProfile) userProfile.classList.add('hidden');
             if (adminBtn) adminBtn.style.display = 'none';
         }
-    }
+    } showNotification(message, type = 'info') {
+        // Try to find the notification div (for merchandise page)
+        let notification = document.getElementById('notification');
 
-    showNotification(message, type = 'info') {
-        const notifications = document.getElementById('notifications');
-        if (!notifications) return;
-        
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        
-        const uniqueId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        notification.setAttribute('data-testid', uniqueId);
-        notification.setAttribute('data-notification', 'true');
-        
-        notifications.appendChild(notification);
-        
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 5000);
+        if (notification) {
+            // Use existing notification div
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            notification.setAttribute('data-notification', 'true');
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        } else {
+            // Fallback to creating notifications dynamically
+            const notifications = document.getElementById('notifications');
+            if (!notifications) return;
+
+            const newNotification = document.createElement('div');
+            newNotification.className = `notification ${type}`;
+            newNotification.textContent = message;
+
+            const uniqueId = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            newNotification.setAttribute('data-testid', uniqueId);
+            newNotification.setAttribute('data-notification', 'true');
+
+            notifications.appendChild(newNotification);
+
+            setTimeout(() => {
+                if (newNotification.parentNode) {
+                    newNotification.remove();
+                }
+            }, 5000);
+        }
     }
 }
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new KuchingARTApp();
-    
+
     // Set minimum date for ticket booking to today
     const dateInput = document.getElementById('departureDate');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
+    }
+    if (document.getElementById('merchandise')) {
+        window.app.showSection('merchandise');
     }
 });
 

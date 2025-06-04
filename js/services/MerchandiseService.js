@@ -561,14 +561,12 @@ class MerchandiseService {
     async searchMerchandise(query, filters = {}) {
         try {
             const allMerchandise = await this.dataService.getAll('merchandise');
-            const searchTerm = query.toLowerCase();
-
-            let results = allMerchandise.filter(item => {
+            const searchTerm = query.toLowerCase();            let results = allMerchandise.filter(item => {
                 // Text search
                 const textMatch = 
                     item.name.toLowerCase().includes(searchTerm) ||
                     item.description.toLowerCase().includes(searchTerm) ||
-                    item.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                    (item.tags && item.tags.some(tag => tag.toLowerCase().includes(searchTerm))) ||
                     item.category.toLowerCase().includes(searchTerm);
 
                 if (!textMatch) return false;

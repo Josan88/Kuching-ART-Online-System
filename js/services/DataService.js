@@ -17,7 +17,8 @@ class DataService {
         try {
             const storageKey = this.storagePrefix + key;
             localStorage.setItem(storageKey, JSON.stringify(data));
-            return true;        } catch (error) {
+            return true;
+        } catch (error) {
             console.error('Error saving data:', error);
             return false;
         }
@@ -32,7 +33,8 @@ class DataService {
         try {
             const storageKey = this.storagePrefix + key;
             const localData = localStorage.getItem(storageKey);
-            return localData ? JSON.parse(localData) : null;        } catch (error) {
+            return localData ? JSON.parse(localData) : null;
+        } catch (error) {
             console.error('Error loading data:', error);
             return null;
         }
@@ -62,7 +64,8 @@ class DataService {
     async exists(key) {
         try {
             const data = await this.loadData(key);
-            return data !== null;        } catch (error) {
+            return data !== null;
+        } catch (error) {
             console.error('Error checking data existence:', error);
             return false;
         }
@@ -75,14 +78,14 @@ class DataService {
     async getAllKeys() {
         try {
             let keys = [];
-            
+
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith(this.storagePrefix)) {
                     keys.push(key.substring(this.storagePrefix.length));
                 }
             }
-            
+
             return keys;
         } catch (error) {
             console.error('Error getting all keys:', error);
@@ -97,11 +100,11 @@ class DataService {
     async clearAll() {
         try {
             const keys = await this.getAllKeys();
-            
+
             for (const key of keys) {
                 await this.deleteData(key);
             }
-            
+
             return true;
         } catch (error) {
             console.error('Error clearing all data:', error);
@@ -117,11 +120,11 @@ class DataService {
         try {
             const keys = await this.getAllKeys();
             const exportData = {};
-            
+
             for (const key of keys) {
                 exportData[key] = await this.loadData(key);
             }
-            
+
             return {
                 timestamp: new Date().toISOString(),
                 data: exportData
@@ -142,12 +145,13 @@ class DataService {
             if (!importData.data) {
                 throw new Error('Invalid import data format');
             }
-            
+
             for (const [key, value] of Object.entries(importData.data)) {
                 await this.saveData(key, value);
             }
-            
-            return true;        } catch (error) {
+
+            return true;
+        } catch (error) {
             console.error('Error importing data:', error);
             return false;
         }
@@ -160,16 +164,16 @@ class DataService {
     getStorageInfo() {
         try {
             let used = 0;
-            
+
             // Estimate localStorage usage
             for (let key in localStorage) {
                 if (key.startsWith(this.storagePrefix)) {
                     used += localStorage[key].length;
                 }
             }
-            
+
             const total = 5 * 1024 * 1024; // Typical 5MB limit
-            
+
             return {
                 used: used,
                 total: total,
@@ -177,7 +181,7 @@ class DataService {
                 type: 'localStorage'
             };
         } catch (error) {
-            console.error('Error getting storage info:', error);            return { used: 0, total: 0, percentage: 0, type: 'localStorage' };
+            console.error('Error getting storage info:', error); return { used: 0, total: 0, percentage: 0, type: 'localStorage' };
         }
     }
 
@@ -223,12 +227,12 @@ class DataService {
         try {
             const data = await this.getAll(collection);
             const index = data.findIndex(item => item.id === id || item.merchandiseID === id || item.userID === id);
-            
+
             if (index !== -1) {
                 data[index] = { ...data[index], ...updatedData };
                 return await this.saveData(collection, data);
             }
-            
+
             return false;
         } catch (error) {
             console.error(`Error updating ${collection}:`, error);

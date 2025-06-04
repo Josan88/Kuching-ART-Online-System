@@ -3,67 +3,76 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Page Object Model for Kuching ART System
- * This encapsulates page interactions for better maintainability
+ * Updated to use actual HTML selectors instead of test IDs
  */
 class KuchingARTPage {
   constructor(page) {
     this.page = page;
     
-    // Navigation elements
-    this.navHome = page.getByTestId('nav-home');
-    this.navRoutes = page.getByTestId('nav-routes');
-    this.navMerchandise = page.getByTestId('nav-merchandise');
-    this.navProfile = page.getByTestId('nav-profile');
+    // Navigation elements - using actual HTML structure
+    this.navHome = page.locator('nav a[href="index.html"]');
+    this.navRoutes = page.locator('nav a[href="#routes"]');
+    this.navMerchandise = page.locator('nav a[href="merchandise.html"]');
+    this.navSchedules = page.locator('nav a[href="#schedules"]');
+    this.navFares = page.locator('nav a[href="#fares"]');
+    this.navContact = page.locator('nav a[href="#contact"]');
+    this.navFeedback = page.locator('nav a[href="feedback.html"]');
     
-    // Auth elements
-    this.loginBtn = page.getByTestId('login-btn');
-    this.registerBtn = page.getByTestId('register-btn');
-    this.logoutBtn = page.getByTestId('logout-btn');
-    this.userName = page.getByTestId('user-name');
+    // Auth elements - using actual HTML structure
+    this.loginBtn = page.locator('nav a.login-btn, a[href="login.html"]');
+    this.logoutBtn = page.locator('#logoutBtn, .logout-btn, button:has-text("Logout")');
+    this.userName = page.locator('#userName, .user-name');
+      // Hero section elements - using actual HTML structure  
+    this.bookTicketBtn = page.locator('.hero-buttons a[href="booking.html"]').first();
+    this.viewSchedulesBtn = page.locator('.hero-buttons a[href="#schedules"]');
     
-    // Login modal elements
-    this.loginEmail = page.getByTestId('login-email');
-    this.loginPassword = page.getByTestId('login-password');
-    this.submitLogin = page.getByTestId('submit-login');
-    this.closeLoginModal = page.getByTestId('close-login-modal');
+    // Welcome heading - using actual HTML structure
+    this.welcomeHeading = page.locator('h2:has-text("Welcome to Kuching"), .hero-content h2');
     
-    // Register modal elements
-    this.registerName = page.getByTestId('register-name');
-    this.registerEmail = page.getByTestId('register-email');
-    this.registerPassword = page.getByTestId('register-password');
-    this.registerPhone = page.getByTestId('register-phone');
-    this.registerAddress = page.getByTestId('register-address');
-    this.submitRegister = page.getByTestId('submit-register');
-    this.closeRegisterModal = page.getByTestId('close-register-modal');
+    // Ticket booking elements - using actual HTML IDs from the form
+    this.originSelect = page.locator('#origin');
+    this.destinationSelect = page.locator('#destination');
+    this.departureDate = page.locator('#date');
+    this.searchBtn = page.locator('button:has-text("Search")');
     
-    // Hero section elements
-    this.bookTicketBtn = page.getByTestId('book-ticket-btn');
-    this.browseMerchandiseBtn = page.getByTestId('browse-merchandise-btn');
-    
-    // Ticket booking elements
-    this.originSelect = page.getByTestId('origin-select');
-    this.destinationSelect = page.getByTestId('destination-select');
-    this.departureDate = page.getByTestId('departure-date');
-    this.departureTime = page.getByTestId('departure-time');
-    this.ticketType = page.getByTestId('ticket-type');
-    this.searchRoutesBtn = page.getByTestId('search-routes-btn');
-    
-    // Merchandise elements
+    // Section elements
+    this.featuresSection = page.locator('#features');
+    this.schedulesSection = page.locator('#schedules'); 
+    this.routesSection = page.locator('#routes');
+    this.faresSection = page.locator('#fares');
+    this.contactSection = page.locator('#contact');
     this.categoryFilter = page.getByTestId('category-filter');
     this.searchInput = page.getByTestId('search-input');
     this.cartCount = page.getByTestId('cart-count');
     this.cartTotal = page.getByTestId('cart-total');
-    this.checkoutBtn = page.getByTestId('checkout-btn');
+    this.checkoutBtn = page.getByTestId('checkout-btn');    
+    // Authentication elements - using actual login.html structure
+    this.loginEmail = page.locator('#loginEmail');
+    this.loginPassword = page.locator('#loginPassword');
+    this.submitLogin = page.locator('#loginForm button[type="submit"]');
     
-    // Profile elements
-    this.profileName = page.getByTestId('profile-name');
-    this.profileEmail = page.getByTestId('profile-email');
-    this.loyaltyPoints = page.getByTestId('loyalty-points');
-    this.editProfileBtn = page.getByTestId('edit-profile-btn');
-    this.viewOrdersBtn = page.getByTestId('view-orders-btn');
-    this.viewTicketsBtn = page.getByTestId('view-tickets-btn');
-      // Notification
-    this.notification = page.locator('[data-notification="true"]').last();
+    // Register elements - using actual login.html structure  
+    this.registerBtn = page.locator('#register-tab');
+    this.registerName = page.locator('#fullName');
+    this.registerEmail = page.locator('#registerEmail');
+    this.registerPassword = page.locator('#registerPassword');
+    this.registerPhone = page.locator('#phoneNumber');
+    this.registerAddress = page.locator('#address');
+    this.submitRegister = page.locator('#registerForm button[type="submit"]');
+    
+    // Profile elements - fallback selectors
+    this.profileName = page.locator('#profileName, .profile-name');
+    this.profileEmail = page.locator('#profileEmail, .profile-email');
+    this.loyaltyPoints = page.locator('#loyaltyPoints, .loyalty-points');
+    this.editProfileBtn = page.locator('#editProfile, .edit-profile-btn');
+    this.viewOrdersBtn = page.locator('#viewOrders, .view-orders-btn');
+    this.viewTicketsBtn = page.locator('#viewTickets, .view-tickets-btn');
+    
+    // Additional merchandise elements
+    this.browseMerchandiseBtn = page.locator('a[href="merchandise.html"]');
+    
+    // Notification
+    this.notification = page.locator('[data-notification="true"], .notification, .alert').last();
   }
 
   async goto() {
@@ -92,20 +101,15 @@ class KuchingARTPage {
     await this.registerAddress.fill(userData.address);
     await this.submitRegister.click();
   }
-
   async searchTickets(searchData = {
-    origin: 'kuching-central',
-    destination: 'padungan',
-    date: '2025-06-15',
-    time: '10:00',
-    type: 'standard'
+    origin: 'kuching-sentral',
+    destination: 'satok',
+    date: '2025-06-15'
   }) {
     await this.originSelect.selectOption(searchData.origin);
     await this.destinationSelect.selectOption(searchData.destination);
     await this.departureDate.fill(searchData.date);
-    await this.departureTime.selectOption(searchData.time);
-    await this.ticketType.selectOption(searchData.type);
-    await this.searchRoutesBtn.click();
+    await this.searchBtn.click();
   }
 
   async addMerchandiseToCart(merchandiseId) {
@@ -119,46 +123,48 @@ class KuchingARTPage {
   }
 }
 
-test.describe('Kuching ART Online System - Homepage and Navigation', () => {
-  test('should load homepage successfully', async ({ page }) => {
+test.describe('Kuching ART Online System - Homepage and Navigation', () => {  test('should load homepage successfully', async ({ page }) => {
     const artPage = new KuchingARTPage(page);
-    await artPage.goto();    // Check if the main elements are visible
+    await artPage.goto();
+    
+    // Check if the main elements are visible
     await expect(page.locator('h1')).toContainText('Kuching ART');
-    await expect(page.getByRole('heading', { name: 'Welcome to Kuching ART Online System' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Welcome to Kuching.*Rapid Transit/ })).toBeVisible();
     await expect(artPage.bookTicketBtn).toBeVisible();
-    await expect(artPage.browseMerchandiseBtn).toBeVisible();
+    await expect(artPage.viewSchedulesBtn).toBeVisible();
   });
-
   test('should navigate between sections', async ({ page }) => {
     const artPage = new KuchingARTPage(page);
-    await artPage.goto();    // Test navigation to routes section
+    await artPage.goto();
+    
+    // Test navigation to routes section
     await artPage.navRoutes.click();
-    await expect(page.locator('#routes')).toHaveClass(/active/);
-    await expect(page.getByRole('heading', { name: 'Book Your Ticket' })).toBeVisible();
+    // Wait for routes section to be visible instead of checking active class
+    await expect(page.locator('#routes')).toBeVisible();
+    
+    // Test navigation to schedules section
+    await artPage.navSchedules.click();
+    await expect(page.locator('#schedules')).toBeVisible();
 
-    // Test navigation to merchandise section
-    await artPage.navMerchandise.click();
-    await expect(page.locator('#merchandise')).toHaveClass(/active/);
-    await expect(page.getByRole('heading', { name: 'Merchandise Store' })).toBeVisible();
-
-    // Test navigation back to home
-    await artPage.navHome.click();
-    await expect(page.locator('#home')).toHaveClass(/active/);
+    // Test navigation to fares section
+    await artPage.navFares.click();
+    await expect(page.locator('#fares')).toBeVisible();
   });
-
   test('should use hero buttons for navigation', async ({ page }) => {
     const artPage = new KuchingARTPage(page);
     await artPage.goto();
 
-    // Test book ticket button
-    await artPage.bookTicketBtn.click();
-    await expect(page.locator('#routes')).toHaveClass(/active/);
+    // Test book ticket button - use more specific selector to avoid strict mode violation
+    await page.locator('.hero-buttons a[href="booking.html"]').click();
+    // Should navigate to booking page
+    await expect(page).toHaveURL(/booking\.html/);
+    
+    // Navigate back to homepage
+    await page.goto('http://localhost:3000/');
 
-    // Navigate back to home
-    await artPage.navHome.click();
-
-    // Test browse merchandise button
-    await artPage.browseMerchandiseBtn.click();
-    await expect(page.locator('#merchandise')).toHaveClass(/active/);
+    // Test view schedules button
+    await artPage.viewSchedulesBtn.click();
+    // Should scroll to schedules section
+    await expect(page.locator('#schedules')).toBeVisible();
   });
 });

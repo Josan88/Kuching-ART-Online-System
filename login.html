@@ -22,7 +22,6 @@
           <li><a href="index.html#routes">Routes</a></li>
           <li><a href="index.html#fares">Fares</a></li>
           <li><a href="index.html#contact">Contact</a></li>
-          <li><a href="feedback.html">Feedback</a></li>
           <li><a href="merchandise.html">Merchandise</a></li>
           <li><a href="login.html" class="login-btn">Login / Register</a></li>
         </ul>
@@ -142,7 +141,7 @@
 
   <!-- Convert this script to a module so we can import PointsLedger -->
   <script type="module">
-    import PointsLedger from '../../js/models/PointsLedger.js';
+    import PointsLedger from '/js/models/PointsLedger.js';
 
     document.addEventListener('DOMContentLoaded', function () {
       const loginTab = document.getElementById('login-tab');
@@ -227,6 +226,6 @@
       });
     });
   </script>
-  <script src="js/app.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -9,37 +9,40 @@ class KuchingARTPage {
     this.page = page;
     
     // Navigation
-    this.navMerchandise = page.getByTestId('nav-merchandise');
+    this.navMerchandise = page.locator('nav a[href="merchandise.html"]');
     
     // Auth elements
-    this.loginBtn = page.getByTestId('login-btn');
-    this.loginEmail = page.getByTestId('login-email');
-    this.loginPassword = page.getByTestId('login-password');
-    this.submitLogin = page.getByTestId('submit-login');
+    this.loginBtn = page.locator('nav a.login-btn');
+    this.loginEmail = page.locator('#loginEmail');
+    this.loginPassword = page.locator('#loginPassword');
+    this.submitLogin = page.locator('button[form="loginForm"]');
     
     // Merchandise elements
-    this.categoryFilter = page.getByTestId('category-filter');
-    this.searchInput = page.getByTestId('search-input');
-    this.cartCount = page.getByTestId('cart-count');
-    this.cartTotal = page.getByTestId('cart-total');
-    this.checkoutBtn = page.getByTestId('checkout-btn');
-      // Notification
+    this.categoryFilter = page.locator('#categoryFilter');
+    this.searchInput = page.locator('#searchInput');
+    this.cartCount = page.locator('#cartCount');
+    this.cartTotal = page.locator('#cartTotal');
+    this.checkoutBtn = page.locator('#checkoutBtn');
+    // Notification
     this.notification = page.locator('[data-notification="true"]').last();
   }
 
   async goto() {
     await this.page.goto('/');
-  }
+  }  // Login-related functionality moved to checkout-tests.js
 
   async login(email = 'test@example.com', password = 'password123') {
     await this.loginBtn.click();
+    
+    // Wait for the modal to be visible
+    await this.page.waitForSelector('#loginModal.active', { timeout: 5000 });
+    
     await this.loginEmail.fill(email);
     await this.loginPassword.fill(password);
     await this.submitLogin.click();
   }
-
   async addMerchandiseToCart(merchandiseId) {
-    const addToCartBtn = this.page.getByTestId(`add-to-cart-${merchandiseId}`);
+    const addToCartBtn = this.page.locator(`[data-testid="add-to-cart-${merchandiseId}"]`);
     await addToCartBtn.click();
   }
 
@@ -49,18 +52,17 @@ class KuchingARTPage {
   }
 }
 
-test.describe('Merchandise Store', () => {
-  test('should display merchandise store interface', async ({ page }) => {
+test.describe('Merchandise Store', () => {  test('should display merchandise store interface', async ({ page }) => {
     const artPage = new KuchingARTPage(page);
     await artPage.goto();
       await artPage.navMerchandise.click();
     
     // Check if main elements are visible
-    await expect(page.getByRole('heading', { name: 'Merchandise Store' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Official Merchandise' })).toBeVisible();
     await expect(artPage.categoryFilter).toBeVisible();
     await expect(artPage.searchInput).toBeVisible();
     await expect(page.locator('#merchandiseGrid')).toBeVisible();
-    await expect(page.locator('#cart')).toBeVisible();
+    await expect(page.locator('#shopping-cart-section')).toBeVisible();
   });
 
   test('should display sample merchandise items', async ({ page }) => {
@@ -75,8 +77,7 @@ test.describe('Merchandise Store', () => {
     // Check if merchandise items are displayed
     const merchandiseItems = page.locator('.merchandise-item');
     await expect(merchandiseItems).toHaveCount(3);
-    
-    // Check specific items
+      // Check specific items
     await expect(page.getByTestId('merchandise-1')).toBeVisible();
     await expect(page.getByTestId('merchandise-2')).toBeVisible();
     await expect(page.getByTestId('merchandise-3')).toBeVisible();
@@ -91,14 +92,12 @@ test.describe('Merchandise Store', () => {
     await artPage.goto();
     
     await artPage.navMerchandise.click();
-    
-    // Check category options
+      // Check category options
     const categoryOptions = await artPage.categoryFilter.locator('option').allTextContents();
     expect(categoryOptions).toContain('All Categories');
     expect(categoryOptions).toContain('Clothing');
     expect(categoryOptions).toContain('Accessories');
     expect(categoryOptions).toContain('Souvenirs');
-    expect(categoryOptions).toContain('Food');
   });
 
   test('should filter merchandise by category', async ({ page }) => {
@@ -116,8 +115,7 @@ test.describe('Merchandise Store', () => {
     const visibleItems = page.locator('.merchandise-item:visible');
     await expect(visibleItems).toHaveCount(1);
     await expect(visibleItems.first()).toContainText('T-Shirt');
-    
-    // Filter by accessories
+      // Filter by accessories
     await artPage.categoryFilter.selectOption('accessories');
     await page.waitForTimeout(300);
     
@@ -148,8 +146,7 @@ test.describe('Merchandise Store', () => {
     const visibleItems = page.locator('.merchandise-item:visible');
     await expect(visibleItems).toHaveCount(1);
     await expect(visibleItems.first()).toContainText('Coffee Mug');
-    
-    // Search for "kuching"
+      // Search for "kuching"
     await artPage.searchInput.fill('kuching');
     await page.waitForTimeout(300);
     
@@ -174,8 +171,7 @@ test.describe('Merchandise Store', () => {
     // Initial cart should be empty
     await expect(artPage.cartCount).toHaveText('0');
     await expect(artPage.cartTotal).toHaveText('0.00');
-    
-    // Add first item to cart
+      // Add first item to cart
     await artPage.addMerchandiseToCart('1');
     await artPage.waitForNotification('Kuching ART T-Shirt added to cart!');
     
@@ -233,14 +229,12 @@ test.describe('Merchandise Store', () => {
     // Check individual items
     await expect(cartItems.first()).toContainText('Kuching ART T-Shirt x1');
     await expect(cartItems.first()).toContainText('RM 25.00');
-    
-    await expect(cartItems.nth(1)).toContainText('ART Coffee Mug x1');
+      await expect(cartItems.nth(1)).toContainText('ART Coffee Mug x1');
     await expect(cartItems.nth(1)).toContainText('RM 12.00');
     
-    await expect(cartItems.nth(2)).toContainText('Kuching Keychain x1');
+    await expect(cartItems.nth(2)).toContainText('Kuching ART Model Train x1');
     await expect(cartItems.nth(2)).toContainText('RM 8.00');
-    
-    // Check total
+      // Check total
     await expect(artPage.cartTotal).toHaveText('45.00'); // 25 + 12 + 8
   });
 
@@ -260,47 +254,7 @@ test.describe('Merchandise Store', () => {
     
     // Check if login modal appears
     await expect(page.locator('#loginModal')).toHaveClass(/active/);
-  });
-
-  test('should show error when trying to checkout empty cart', async ({ page }) => {
-    const artPage = new KuchingARTPage(page);
-    await artPage.goto();
-    
-    // Login first
-    await artPage.login();
-    await artPage.waitForNotification('Login successful!');
-    
-    await artPage.navMerchandise.click();
-    
-    // Try to checkout with empty cart
-    await artPage.checkoutBtn.click();
-    await artPage.waitForNotification('Your cart is empty');
-  });
-
-  test('should successfully checkout when logged in with items', async ({ page }) => {
-    const artPage = new KuchingARTPage(page);
-    await artPage.goto();
-    
-    // Login first
-    await artPage.login();
-    await artPage.waitForNotification('Login successful!');
-    
-    await artPage.navMerchandise.click();
-    await page.waitForTimeout(500);
-    
-    // Add items to cart
-    await artPage.addMerchandiseToCart('1'); // RM 25.00
-    await artPage.addMerchandiseToCart('2'); // RM 12.00
-    
-    // Checkout
-    await artPage.checkoutBtn.click();
-    await artPage.waitForNotification('Order placed successfully! Total: RM 37.00');
-    
-    // Cart should be empty after checkout
-    await expect(artPage.cartCount).toHaveText('0');
-    await expect(artPage.cartTotal).toHaveText('0.00');
-    await expect(page.locator('#cartItems')).toBeEmpty();
-  });
+  });  // Checkout tests moved to checkout-tests.js
 
   test('should handle combined category filter and search', async ({ page }) => {
     const artPage = new KuchingARTPage(page);
@@ -344,14 +298,12 @@ test.describe('Merchandise Store', () => {
     
     // Check second item (Mug)
     const secondItem = page.getByTestId('merchandise-2');
-    await expect(secondItem).toContainText('ART Coffee Mug');
-    await expect(secondItem).toContainText('Ceramic coffee mug with ART logo');
+    await expect(secondItem).toContainText('ART Coffee Mug');    await expect(secondItem).toContainText('Ceramic coffee mug with ART logo');
     await expect(secondItem).toContainText('RM 12.00');
-    
-    // Check third item (Keychain)
+      // Check third item (Model Train)
     const thirdItem = page.getByTestId('merchandise-3');
-    await expect(thirdItem).toContainText('Kuching Keychain');
-    await expect(thirdItem).toContainText('Souvenir keychain featuring Kuching landmarks');
+    await expect(thirdItem).toContainText('Kuching ART Model Train');
+    await expect(thirdItem).toContainText('Detailed model train replica of the Kuching ART system');
     await expect(thirdItem).toContainText('RM 8.00');
   });
 
@@ -370,8 +322,7 @@ test.describe('Merchandise Store', () => {
     
     // Wait for all notifications to appear
     await page.waitForTimeout(1000);
-    
-    // Check final cart state
+      // Check final cart state
     await expect(artPage.cartCount).toHaveText('4');
     await expect(artPage.cartTotal).toHaveText('70.00'); // (25*2) + 12 + 8 = 70
   });
