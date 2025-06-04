@@ -84,7 +84,7 @@ const server = http.createServer((req, res) => {
 
   // 1) Redirect “/” → booking.html
   if (pathname === "/") {
-    res.writeHead(302, { Location: "/Kuching-ART-Online-System/booking.html" });
+    res.writeHead(302, { Location: "/Kuching-ART-Online-System/index.html" });
     return res.end();
   }
 
