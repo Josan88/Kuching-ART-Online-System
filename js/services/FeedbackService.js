@@ -7,10 +7,12 @@
  * @since Assignment 3 - SWE30003
  */
 
+import Feedback from '../models/Feedback.js';
+
 class FeedbackService {
     constructor(dataService) {
         this.dataService = dataService;
-        this.feedbackTypes = ['route', 'service', 'merchandise', 'general', 'complaint', 'suggestion'];
+        this.feedbackTypes = ['route', 'service', 'merchandise', 'general', 'complaint', 'suggestion', 'booking', 'website', 'other'];
         this.priorityLevels = ['low', 'medium', 'high', 'urgent'];
         this.statusTypes = ['pending', 'acknowledged', 'in_progress', 'resolved', 'closed'];
     }
@@ -46,7 +48,7 @@ class FeedbackService {
             });
 
             // Save feedback
-            const savedFeedback = await this.dataService.save('feedback', feedback);
+            const savedFeedback = await this.dataService.saveData('feedback', feedback);
 
             // Send notification to administrators if high priority
             if (feedback.priority === 'high' || feedback.priority === 'urgent') {
@@ -153,7 +155,10 @@ class FeedbackService {
      * @returns {boolean} Contains inappropriate content
      */
     containsInappropriateContent(text) {
-        const inappropriateWords = ['spam', 'profanity']; // Simplified list
+        if (typeof text !== 'string' || !text) {
+            return false;
+        }
+        const inappropriateWords = ['spam', 'profanity'];
         const lowerText = text.toLowerCase();
         return inappropriateWords.some(word => lowerText.includes(word));
     }
