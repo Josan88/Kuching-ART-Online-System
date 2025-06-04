@@ -1,12 +1,11 @@
-// File: js/cancel.js
+// File: js/models/cancel.js
 
 import Route from "./Route.js"; // adjust path if necessary
 
 document.addEventListener("DOMContentLoaded", () => {
   // ─── Elements in cancel‐refund.html ───────────────────────────────────────────
   const cancelReferenceInput = document.getElementById("cancelReference");
-  const cancelNameInput      = document.getElementById("cancelEmail"); 
-    // (we’re reusing this as “name”-input; if you stored email in bookingData, rename accordingly)
+  const cancelNameInput      = document.getElementById("cancelEmail");
   const searchCancelBtn      = document.getElementById("searchCancelBtn");
 
   const cancelResultsDiv     = document.getElementById("cancel-results");
@@ -39,7 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const cancelRefundAmtSpan   = document.getElementById("cancel-refund-amount-modal");
   const refundForm            = document.getElementById("refundForm");
 
-  let currentBookingData = null; 
+  // NEW: a container for showing "Refund successful" inline
+  const refundSuccessMessage  = document.createElement("p");
+  refundSuccessMessage.id     = "refund-success-message";
+  refundSuccessMessage.textContent = "Refund successful.";
+  refundSuccessMessage.style.color = "green";
+  refundSuccessMessage.style.marginTop = "1rem";
+  refundSuccessMessage.style.display = "none";
+  // Insert it right below the "Cancel Booking" button block:
+  cancelBookingBtn.parentElement.appendChild(refundSuccessMessage);
+
+  let currentBookingData = null;
   let currentRouteInfo   = null; // to store route text once we load it
 
   // ─── 1) Preload all routes (so we can map originId/destinationId → station names) ─────────
@@ -57,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide any previous messages
     cancelResultsDiv.style.display   = "none";
     noCancelMessageDiv.style.display = "none";
+    refundSuccessMessage.style.display = "none";
 
     const enteredRef  = cancelReferenceInput.value.trim();
     const enteredName = cancelNameInput.value.trim().toLowerCase();
@@ -202,8 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide the “Cancel Booking” button, since it’s now cancelled:
     cancelBookingBtn.style.display = "none";
 
+    // Show our “Refund successful” message inline:
+    refundSuccessMessage.style.display = "block";
+
     cancelModal.style.display = "none";
-    alert("Your booking has been cancelled successfully.");
+
+    // Still keep the pop‐up alert if desired:
+    alert("Your booking has been cancelled successfully.\nRefund successful.");
   });
 
   // ─── Utility: Format date as “DD/MM/YYYY” ───────────────────────────────────────

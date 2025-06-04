@@ -405,6 +405,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sessionStorage.setItem("bookingData", JSON.stringify(bookingData));
 
+    // ─── Save this booking into localStorage under “orders” ───────────────────────
+    const storedRaw = localStorage.getItem("orders") || "[]";
+    let allOrders;
+    try {
+      allOrders = JSON.parse(storedRaw);
+    } catch {
+      allOrders = [];
+    }
+
+    const snapshot = {
+      orderID:       `ORD${Date.now()}`,
+      userID:        bookingData.userID || "GUEST",
+      orderDate:     new Date().toISOString(),
+      status:        "completed",
+      paymentStatus: paymentObj.status,
+      routeID:       bookingData.originId,
+      travelDate:    bookingData.travelDate,
+      passengers:    bookingData.passengers,
+      totalFare:     bookingData.totalFare,
+      refundAmount:  0,
+      orderItems: [
+        {
+          itemID:    bookingData.tripId,
+          itemType:  "ticket",
+          quantity:  bookingData.passengers,
+          unitPrice: bookingData.totalFare / bookingData.passengers,
+          subtotal:  bookingData.totalFare
+        }
+      ]
+    };
+
+    allOrders.push(snapshot);
+    localStorage.setItem("orders", JSON.stringify(allOrders));
+    // ──────────────────────────────────────────────────────────────────────────────
+
     // ─── Move to Step 5 (Confirmation), then pop up notification ───────────────
     populateConfirmation(bookingData, paymentObj);
     goToStep(5);
