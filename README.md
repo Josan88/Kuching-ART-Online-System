@@ -2,7 +2,7 @@
 
 [![Node.js CI](https://github.com/Josan88/Kuching-ART-Online-System/actions/workflows/node.js.yml/badge.svg)](https://github.com/Josan88/Kuching-ART-Online-System/actions/workflows/node.js.yml)
 
-A comprehensive JavaScript-based transportation booking and merchandise management system for Kuching Autonomous Rapid Transit (ART) services.
+A comprehensive client-side JavaScript transportation booking and merchandise management system for Kuching Autonomous Rapid Transit (ART) services.
 
 ## 📋 Table of Contents
 
@@ -19,57 +19,59 @@ A comprehensive JavaScript-based transportation booking and merchandise manageme
 
 ## 🚌 Overview
 
-The Kuching ART Online System is a full-featured web application designed to provide:
+The Kuching ART Online System is a client-side web application built with vanilla JavaScript that provides:
 - **Transportation Services**: Route management, ticket booking, and schedule tracking
 - **E-Commerce Platform**: Merchandise catalog, inventory management, and online sales
-- **User Management**: Authentication, profiles, and loyalty programs
+- **User Management**: Authentication, profiles, and loyalty programs using localStorage
 - **Administrative Tools**: Order processing, feedback management, and analytics
-- **Communication System**: Multi-channel notifications and customer support
+- **Communication System**: Notification management and customer feedback
+
+All data is stored locally using the browser's localStorage API, making this a fully client-side application.
 
 ## ✨ Features
 
 ### 🎫 Transportation Services
 - **Route Management**: Comprehensive route planning with origin/destination tracking
-- **Ticket Booking**: Real-time seat availability and reservation system
-- **Schedule Management**: Dynamic timetables with departure/arrival tracking
+- **Ticket Booking**: Seat availability and reservation system
+- **Schedule Management**: Timetables with departure/arrival tracking
 - **Price Calculation**: Distance-based and time-sensitive pricing
 
 ### 🛒 E-Commerce Platform
-- **Product Catalog**: Multi-category merchandise with advanced filtering
-- **Inventory Control**: Real-time stock tracking with automatic low-stock alerts
-- **Shopping Cart**: Persistent cart with item management
-- **Stock Reservation**: Temporary holds during checkout process (15-minute expiration)
+- **Product Catalog**: Multi-category merchandise with filtering capabilities
+- **Inventory Control**: Stock tracking with low-stock alerts
+- **Shopping Cart**: Persistent cart using localStorage
+- **Stock Reservation**: Temporary holds during checkout process
 
 ### 💳 Payment Processing
 - **Multi-Gateway Support**: Credit card, debit card, PayPal, bank transfer, e-wallet
-- **Security Features**: Luhn algorithm validation and fraud protection
+- **Security Features**: Luhn algorithm validation for card numbers
 - **Transaction Management**: Refunds, partial payments, and transaction history
 - **Fee Calculation**: Dynamic fee structure based on payment method
 
 ### 👥 User Management
-- **Authentication System**: Secure login/registration with session management
+- **Authentication System**: Login/registration with localStorage session management
 - **Role-Based Access**: User and Admin roles with appropriate permissions
-- **Profile Management**: Comprehensive user profiles with preferences
+- **Profile Management**: User profiles with preferences stored locally
 - **Loyalty Program**: Points-based rewards system (1 point per RM spent)
 
 ### 📊 Analytics & Reporting
-- **Sales Statistics**: Revenue tracking, product performance, and trend analysis
-- **User Analytics**: Registration trends, activity patterns, and engagement metrics
-- **Inventory Reports**: Stock levels, turnover rates, and reorder alerts
-- **Financial Reports**: Payment success rates, refund statistics, and fee analysis
+- **Sales Statistics**: Revenue tracking and product performance analysis
+- **User Analytics**: Registration trends and activity patterns
+- **Inventory Reports**: Stock levels and turnover rates
+- **Financial Reports**: Payment statistics and fee analysis
 
 ### 💬 Communication System
-- **Multi-Channel Notifications**: In-app, email, SMS, and push notifications
+- **Notification Management**: In-app notification system
 - **Feedback Management**: Customer reviews, ratings, and complaint handling
 - **Admin Responses**: Direct communication with customer support
-- **Automated Alerts**: System notifications for important events
+- **System Alerts**: Notifications for important events
 
 ## 🏗️ Architecture
 
 ### Design Patterns
 - **Model-View-Controller (MVC)**: Clear separation of concerns
 - **Service Layer Pattern**: Business logic abstraction
-- **Repository Pattern**: Data access abstraction
+- **Repository Pattern**: Data access abstraction using DataService
 - **Observer Pattern**: Event-driven notifications
 
 ### Key Architectural Components
@@ -78,15 +80,16 @@ The Kuching ART Online System is a full-featured web application designed to pro
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   View Layer    │────│ Service Layer   │────│  Model Layer    │
 │                 │    │                 │    │                 │
-│ • User Interface│    │ • Business Logic│    │ • Data Models   │
-│ • Forms         │    │ • Validations   │    │ • Entities      │
-│ • Components    │    │ • Workflows     │    │ • Relationships │
+│ • HTML/CSS      │    │ • Business Logic│    │ • Data Models   │
+│ • DOM Events    │    │ • Validations   │    │ • Entities      │
+│ • User Interface│    │ • Workflows     │    │ • Relationships │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │
                        ┌─────────────────┐
                        │  Data Layer     │
                        │                 │
                        │ • localStorage  │
+                       │ • DataService   │
                        └─────────────────┘
 ```
 
@@ -110,8 +113,8 @@ Kuching-ART-Online-System/
 │   │   ├── PointsLedger.js  # Loyalty points tracking
 │   │   └── Notification.js  # System notifications
 │   │
-│   └── services/            # Business logic and API services
-│       ├── DataService.js      # Data persistence abstraction
+│   └── services/            # Business logic and services
+│       ├── DataService.js      # localStorage abstraction
 │       ├── UserService.js      # User management and authentication
 │       ├── TicketService.js    # Ticket booking operations
 │       ├── OrderService.js     # Order processing workflows
@@ -124,8 +127,8 @@ Kuching-ART-Online-System/
 ## 🚀 Installation
 
 ### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Local web server (optional, for development)
+- Modern web browser (Chrome, Firefox, Safari, Edge) with localStorage support
+- No server or database required - this is a client-side only application
 
 ### Setup Instructions
 
@@ -134,9 +137,9 @@ Kuching-ART-Online-System/
 2. **Open the project** in your preferred code editor
 
 3. **Launch the application**:
-   - **Option A**: Open `index.html` directly in your browser
-   - **Option B**: Use a local development server
-     ```powershell
+   - **Option A**: Open `index.html` directly in your browser by double-clicking
+   - **Option B**: Use a local development server for development
+     ```bash
      # Using Python
      python -m http.server 8000
      
@@ -147,7 +150,7 @@ Kuching-ART-Online-System/
      # Right-click index.html → "Open with Live Server"
      ```
 
-4. **Access the application** at `http://localhost:8000` (if using a server)
+4. **Access the application** at `http://localhost:8000` (if using a server) or directly via file:// protocol
 
 ## 📖 Usage
 
@@ -156,33 +159,43 @@ Kuching-ART-Online-System/
 #### 1. User Registration & Login
 ```javascript
 // Example user registration
+const dataService = new DataService();
 const userService = new UserService(dataService);
-const result = await userService.register({
+
+const result = userService.register({
     name: "John Doe",
     email: "john@example.com",
     password: "securePassword123",
     phone: "+60123456789"
 });
+
+if (result.success) {
+    console.log("Registration successful!");
+}
 ```
 
 #### 2. Booking Tickets
 ```javascript
 // Example ticket booking
 const ticketService = new TicketService(dataService);
-const booking = await ticketService.bookTicket({
+const booking = ticketService.bookTicket({
     routeId: "route_001",
     userId: "user_123",
     departureTime: "2025-06-15T08:00:00Z",
     seatNumbers: ["A1", "A2"],
     passengerCount: 2
 });
+
+if (booking.success) {
+    console.log("Ticket booked successfully!");
+}
 ```
 
 #### 3. Shopping for Merchandise
 ```javascript
 // Example merchandise browsing
 const merchandiseService = new MerchandiseService(dataService);
-const products = await merchandiseService.getAllMerchandise({
+const products = merchandiseService.getAllMerchandise({
     category: "souvenirs",
     minPrice: 10,
     maxPrice: 100,
@@ -196,7 +209,7 @@ const products = await merchandiseService.getAllMerchandise({
 ```javascript
 // Example payment processing
 const paymentService = new PaymentService(dataService);
-const payment = await paymentService.processPayment({
+const payment = paymentService.processPayment({
     method: "credit_card",
     cardNumber: "4111111111111111",
     expiryMonth: "12",
@@ -204,6 +217,10 @@ const payment = await paymentService.processPayment({
     cvv: "123",
     cardholderName: "John Doe"
 }, orderId);
+
+if (payment.success) {
+    console.log("Payment processed successfully!");
+}
 ```
 
 ### For Administrators
@@ -211,10 +228,10 @@ const payment = await paymentService.processPayment({
 #### 1. Managing Inventory
 ```javascript
 // Check low stock items
-const lowStockItems = await merchandiseService.getLowStockItems(10);
+const lowStockItems = merchandiseService.getLowStockItems(10);
 
 // Get sales statistics
-const stats = await merchandiseService.getSalesStatistics({
+const stats = merchandiseService.getSalesStatistics({
     startDate: "2025-01-01",
     endDate: "2025-12-31"
 });
@@ -224,13 +241,13 @@ const stats = await merchandiseService.getSalesStatistics({
 ```javascript
 // Get pending feedback
 const feedbackService = new FeedbackService(dataService);
-const feedback = await feedbackService.getAllFeedback({
+const feedback = feedbackService.getAllFeedback({
     status: "pending",
     priority: "high"
 });
 
 // Respond to feedback
-await feedbackService.addFeedbackResponse(
+feedbackService.addFeedbackResponse(
     feedbackId, 
     "Thank you for your feedback. We're addressing this issue.",
     adminId
@@ -246,7 +263,7 @@ await feedbackService.addFeedbackResponse(
 
 **Key Methods**:
 - `saveData(key, data)` - Save data to localStorage
-- `loadData(key)` - Load data from localStorage
+- `loadData(key)` - Load data from localStorage  
 - `deleteData(key)` - Delete data from localStorage
 - `getAllKeys()` - Get all storage keys
 - `clearAll()` - Clear all stored data
@@ -258,20 +275,23 @@ await feedbackService.addFeedbackResponse(
 **Purpose**: Manages user authentication, registration, and profile management.
 
 **Key Methods**:
-- `register(userData)` - Register new user
-- `login(email, password)` - Authenticate user
+- `register(userData)` - Register new user, returns {success, message, user}
+- `login(email, password)` - Authenticate user, returns {success, message, user}
 - `updateProfile(userId, profileData)` - Update user profile
 - `changePassword(userId, oldPassword, newPassword)` - Change password
+- `getCurrentUser()` - Get currently logged-in user
+- `logout()` - Clear current session
 
 #### MerchandiseService
 **Purpose**: Handles product catalog, inventory management, and stock operations.
 
 **Key Methods**:
 - `getAllMerchandise(options)` - Get products with filtering/pagination
-- `getMerchandiseById(id)` - Get single product with related items
+- `getMerchandiseById(id)` - Get single product details
 - `checkStockAvailability(items)` - Verify stock for multiple items
 - `reserveStock(items, reservationId)` - Temporarily hold stock
 - `searchMerchandise(query, filters)` - Advanced product search
+- `getLowStockItems(threshold)` - Get items below stock threshold
 
 #### PaymentService
 **Purpose**: Processes payments, handles refunds, and manages transaction records.
@@ -281,6 +301,7 @@ await feedbackService.addFeedbackResponse(
 - `refundPayment(paymentId, amount)` - Process refund
 - `getPaymentHistory(userId, options)` - Get user payment history
 - `validatePaymentData(paymentData)` - Validate payment information
+- `calculatePaymentFees(method, amount)` - Calculate processing fees
 
 ### Data Models
 
@@ -295,7 +316,8 @@ await feedbackService.addFeedbackResponse(
     loyaltyPoints: 150,
     profileComplete: true,
     status: "active",
-    createdAt: "2025-06-01T10:00:00Z"
+    createdAt: "2025-06-01T10:00:00Z",
+    lastLogin: "2025-06-15T08:30:00Z"
 }
 ```
 
@@ -311,7 +333,8 @@ await feedbackService.addFeedbackResponse(
     soldQuantity: 25,
     tags: ["clothing", "official", "cotton"],
     featured: true,
-    images: ["shirt1.jpg", "shirt2.jpg"]
+    images: ["shirt1.jpg", "shirt2.jpg"],
+    createdAt: "2025-05-01T00:00:00Z"
 }
 ```
 
@@ -320,10 +343,21 @@ await feedbackService.addFeedbackResponse(
 {
     id: "order_001",
     userId: "user_001",
-    items: [OrderItem],
-    totalAmount: 85.50,
+    items: [
+        {
+            merchandiseId: "merch_001", 
+            quantity: 2, 
+            price: 35.00
+        }
+    ],
+    totalAmount: 70.00,
     status: "pending", // "pending" | "paid" | "shipped" | "delivered"
-    shippingAddress: {...},
+    shippingAddress: {
+        street: "123 Main St",
+        city: "Kuching",
+        state: "Sarawak",
+        postalCode: "93100"
+    },
     createdAt: "2025-06-01T14:30:00Z"
 }
 ```
@@ -344,13 +378,13 @@ await feedbackService.addFeedbackResponse(
 | **Payment** | Transaction processing | Payment methods, fees, refunds |
 | **Feedback** | Customer feedback system | Ratings, reviews, admin responses |
 | **PointsLedger** | Loyalty points tracking | Earning/spending history |
-| **Notification** | System messaging | Multi-channel delivery, scheduling |
+| **Notification** | System messaging | Message delivery, scheduling |
 
 ### Service Classes (8 classes)
 
 | Service | Responsibility | Integration Points |
 |---------|---------------|-------------------|
-| **DataService** | Data persistence abstraction | All other services |
+| **DataService** | localStorage abstraction | All other services |
 | **UserService** | User management & authentication | OrderService, NotificationService |
 | **TicketService** | Transportation booking | UserService, PaymentService |
 | **OrderService** | E-commerce order processing | MerchandiseService, PaymentService |
@@ -373,13 +407,13 @@ await feedbackService.addFeedbackResponse(
 
 #### 3. Polymorphism
 - Multiple payment methods with unified interface
-- Different notification channels with common API
-- Flexible data storage backends
+- Different notification types with common API
+- Flexible data storage implementation
 
 #### 4. Abstraction
 - Service layer abstracts business logic from data storage
 - Models provide clean interfaces to complex data structures
-- DataService abstracts storage implementation details
+- DataService abstracts localStorage implementation details
 
 ## 🤝 Contributing
 
@@ -396,7 +430,8 @@ await feedbackService.addFeedbackResponse(
 1. **Model Changes**: Update relevant model classes first
 2. **Service Logic**: Implement business logic in appropriate service
 3. **Integration**: Update dependent services and methods
-4. **Documentation**: Update README and inline documentation
+4. **Testing**: Test with localStorage data
+5. **Documentation**: Update README and inline documentation
 
 ### Code Quality Standards
 
@@ -404,7 +439,7 @@ await feedbackService.addFeedbackResponse(
 - **Functions**: Keep methods focused and under 50 lines when possible
 - **Comments**: Explain complex business logic and algorithms
 - **Error Messages**: Provide clear, actionable error messages
-- **Performance**: Consider efficiency in data operations and loops
+- **Performance**: Consider efficiency in localStorage operations
 
 ## 📋 Assignment Information
 
@@ -419,7 +454,7 @@ await feedbackService.addFeedbackResponse(
 1. **Object-Oriented Design**: Implement comprehensive class hierarchies
 2. **Design Patterns**: Apply appropriate software design patterns
 3. **Business Logic**: Create realistic business process workflows
-4. **Data Management**: Implement effective data persistence strategies
+4. **Data Management**: Implement effective data persistence using localStorage
 5. **Integration**: Demonstrate inter-class communication and dependencies
 
 ### Technical Requirements Met
@@ -431,16 +466,18 @@ await feedbackService.addFeedbackResponse(
 - ✅ **Design Patterns**: MVC, Repository, Observer patterns implemented
 - ✅ **Error Handling**: Comprehensive validation and error management
 - ✅ **Documentation**: Detailed JSDoc and README documentation
+- ✅ **Client-Side Storage**: localStorage for data persistence
 
 ### Features Implemented
-- 🎫 **Transportation Booking System** with real-time availability
+- 🎫 **Transportation Booking System** with seat availability
 - 🛒 **E-Commerce Platform** with inventory management
-- 💳 **Payment Processing** with multiple gateway support
+- 💳 **Payment Processing** with validation and fee calculation
 - 👥 **User Management** with role-based access control
 - 📊 **Analytics Dashboard** with comprehensive reporting
-- 💬 **Communication System** with multi-channel notifications
+- 💬 **Communication System** with notification management
 - 🎯 **Loyalty Program** with points and rewards
-- 📱 **Responsive Design** considerations for modern web applications
+- 💾 **Local Storage**: Complete client-side data persistence
+- 🔒 **Security**: Input validation and secure authentication
 
 ---
 
@@ -451,6 +488,7 @@ For questions, issues, or contributions related to this project:
 - **Academic Queries**: Contact course instructor or teaching assistants
 - **Technical Issues**: Review the code documentation and error handling
 - **Feature Requests**: Consider the assignment scope and requirements
+- **Browser Compatibility**: Ensure localStorage support is enabled
 
 ---
 
