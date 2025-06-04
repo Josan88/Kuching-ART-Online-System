@@ -89,7 +89,19 @@
   <!-- 2) Sales Report Section -->
   <section id="sales-report" class="stats-container">
     <h2>Sales Report</h2>
-    <button class="generate-btn" onclick="generateSalesReport()">Generate Sales Report</button>
+
+    <!-- New: Date pickers for start & end -->
+    <div class="date-filters" style="margin-bottom: 1rem;">
+      <label for="startDate">Start Date:</label>
+      <input type="date" id="startDate" />
+
+      <label for="endDate" style="margin-left: 1rem;">End Date:</label>
+      <input type="date" id="endDate" />
+    </div>
+
+    <button class="generate-btn" onclick="onGenerateSalesReport()">
+      Generate Sales Report
+    </button>
 
     <div id="sales-report-output" style="margin-top: 1rem;">
       <!-- Will be populated by JavaScript -->
@@ -101,10 +113,11 @@
     import {
       getAllUsers,
       deleteUser,
-      logout
+      logout,
+      filterOrdersByDate
     } from '../../js/models/Admin.js';
 
-    // Expose for HTML
+    // Expose logout globally
     window.logout = logout;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -171,40 +184,50 @@
         });
       });
     });
-  </script>
 
-  <!-- The Sales‐Report script -->
-  <script type="module">
-    import OrderItem from '../../js/models/OrderItem.js';
-    import Order     from '../../js/models/Order.js';
-
-    window.generateSalesReport = () => {
+    // Called when “Generate Sales Report” button is clicked
+    window.onGenerateSalesReport = () => {
       const outputDiv = document.getElementById('sales-report-output');
       outputDiv.innerHTML = ''; // clear previous report
 
-      // 1) Retrieve all orders from localStorage
-      const raw = localStorage.getItem('orders');
-      if (!raw) {
-        outputDiv.innerHTML = '<p>No orders found in the system.</p>';
-        return;
-      }
-      let allOrders;
+      // 1) Read and validate date inputs
+      const startDateStr = document.getElementById('startDate').value;
+      const endDateStr   = document.getElementById('endDate').value;
+      let filteredOrders;
       try {
-        allOrders = JSON.parse(raw);
-      } catch {
-        outputDiv.innerHTML = '<p>Error reading orders data.</p>';
+        // Retrieve all orders
+        const raw = localStorage.getItem('orders');
+        if (!raw) {
+          throw new Error('No orders found in the system.');
+        }
+        let allOrders;
+        try {
+          allOrders = JSON.parse(raw);
+        } catch {
+          throw new Error('Error reading orders data.');
+        }
+
+        // Use helper to filter by date
+        filteredOrders = filterOrdersByDate(allOrders, startDateStr, endDateStr);
+
+        if (filteredOrders.length === 0) {
+          outputDiv.innerHTML = '<p>No orders found in the selected date range.</p>';
+          return;
+        }
+      } catch (err) {
+        // Display error message (e.g., missing dates or invalid range)
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
         return;
       }
 
-      // 2) Initialize aggregation maps
+      // 2) Initialize aggregation maps for the filtered orders
       let totalRevenue   = 0;
       let totalRefunds   = 0;
       let cancelCount    = 0;
       const quantityByRoute = {};
       const revenueByRoute  = {};
 
-      // 3) Iterate through each order
-      allOrders.forEach(o => {
+      filteredOrders.forEach(o => {
         if (o.status === 'cancelled') {
           cancelCount++;
         }
@@ -229,20 +252,21 @@
         }
       });
 
-      // 4) Build HTML report
+      // 3) Build HTML report
       const reportFragment = document.createDocumentFragment();
 
+      // Summary section
       const summarySection = document.createElement('div');
       summarySection.classList.add('report-summary');
       summarySection.innerHTML = `
-        <h3>Summary</h3>
+        <h3>Summary (from ${startDateStr} to ${endDateStr})</h3>
         <p><strong>Total Revenue:</strong> RM ${totalRevenue.toFixed(2)}</p>
         <p><strong>Total Refunds:</strong> RM ${totalRefunds.toFixed(2)}</p>
         <p><strong>Number of Cancellations:</strong> ${cancelCount}</p>
       `;
       reportFragment.appendChild(summarySection);
 
-      // 5) Table: Quantity Sold & Revenue by Route
+      // Table: Quantity Sold & Revenue by Route
       const table = document.createElement('table');
       table.classList.add('admin-table');
       table.style.marginTop = '1rem';
@@ -270,10 +294,12 @@
 
       reportFragment.appendChild(table);
 
-      // 6) Attach to outputDiv
+      // 4) Attach to outputDiv
       outputDiv.appendChild(reportFragment);
     };
   </script>
+
+  <!-- If you have app.js or other scripts, keep them here -->
   <script src="js/app.js"></script>
 </body>
 </html>
